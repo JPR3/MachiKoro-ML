@@ -8,6 +8,7 @@ namespace MachiKoro_ML
 {
     public class PlayerHandler
     {
-        
+        int numCoins;
+        List<Card> cards = new List<Card>();
     }
 }
