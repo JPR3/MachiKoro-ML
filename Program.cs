@@ -7,7 +7,11 @@ namespace MachiKoro_ML
     {
         /*
          *  TODO:
-         *  
+         *  Add balance command
+         *  Check function of cafe
+         *  Implement remaining cards
+         *  Win condition
+         *  Improve card buying process
          */
         public static void Main(String[] args)
         {

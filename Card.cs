@@ -10,28 +10,28 @@ namespace MachiKoro_ML
     {
         public enum Establishments
         {
-            Wheat_Field,
-            Ranch,
-            Bakery,
-            Cafe,
-            Convenience_Store,
-            Forest,
-            Stadium,
-            TV_Station,
-            Business_Center,
-            Cheese_Factory,
-            Furniture_Factory,
-            Mine,
-            Family_Restaurant,
-            Apple_Orchard,
-            Fruit_And_Vegetable_Market
+            wheat_field,
+            ranch,
+            bakery,
+            cafe,
+            convenience_store,
+            forest,
+            stadium,
+            tv_station,
+            business_center,
+            cheese_factory,
+            furniture_factory,
+            mine,
+            family_restaurant,
+            apple_orchard,
+            fruit_and_vegetable_market
         };
 
 
         readonly Establishments est;
         public readonly PlayerHandler owner;
         public int[] activationNums { get; private set; }
-        int cost;
+        public int cost { get; private set; }
         Action<PlayerHandler> effect;
 
         public Card(Establishments estType, PlayerHandler owner)
@@ -50,7 +50,7 @@ namespace MachiKoro_ML
         {
             switch (type)
             {
-                case Establishments.Wheat_Field:
+                case Establishments.wheat_field:
                     activationNums = new int[1] { 1 };
                     cost = 1;
                     effect = (caller) =>
@@ -59,7 +59,7 @@ namespace MachiKoro_ML
                         owner.ChangeCoins(1);
                     };
                     break;
-                case Establishments.Ranch:
+                case Establishments.ranch:
                     activationNums = new int[1] { 2 };
                     cost = 1;
                     effect = (caller) =>
@@ -68,7 +68,7 @@ namespace MachiKoro_ML
                         owner.ChangeCoins(1);
                     };
                     break;
-                case Establishments.Bakery:
+                case Establishments.bakery:
                     activationNums = new int[2] { 2, 3 };
                     cost = 1;
                     effect = (caller) =>
@@ -80,7 +80,7 @@ namespace MachiKoro_ML
                         }
                     };
                     break;
-                case Establishments.Cafe:
+                case Establishments.cafe:
                     activationNums = new int[1] { 3 };
                     cost = 2;
                     effect = (caller) =>
@@ -88,12 +88,18 @@ namespace MachiKoro_ML
                         if(caller != owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            caller.ChangeCoins(-1);
-                            owner.ChangeCoins(1);
+                            if(caller.ChangeCoins(-1))
+                            {
+                                owner.ChangeCoins(1);
+                            }
+                            else
+                            {
+                                Console.WriteLine("...but there was nothing to steal!");
+                            }
                         }
                     };
                     break;
-                case Establishments.Convenience_Store:
+                case Establishments.convenience_store:
                     activationNums = new int[1] { 4 };
                     cost = 2;
                     effect = (caller) =>
@@ -105,7 +111,7 @@ namespace MachiKoro_ML
                         }
                     };
                     break;
-                case Establishments.Forest:
+                case Establishments.forest:
                     activationNums = new int[1] { 5 };
                     cost = 3;
                     effect = (caller) =>
@@ -114,31 +120,31 @@ namespace MachiKoro_ML
                         owner.ChangeCoins(1);
                     };
                     break;
-                case Establishments.Stadium:
+                case Establishments.stadium:
                     activationNums = new int[1] { 6 };
                     break;
-                case Establishments.TV_Station:
+                case Establishments.tv_station:
                     activationNums = new int[1] { 6 };
                     break;
-                case Establishments.Business_Center:
+                case Establishments.business_center:
                     activationNums = new int[1] { 6 };
                     break;
-                case Establishments.Cheese_Factory:
+                case Establishments.cheese_factory:
                     activationNums = new int[1] { 7 };
                     break;
-                case Establishments.Furniture_Factory:
+                case Establishments.furniture_factory:
                     activationNums = new int[1] { 8 };
                     break;
-                case Establishments.Mine:
+                case Establishments.mine:
                     activationNums = new int[1] { 9 };
                     break;
-                case Establishments.Family_Restaurant:
+                case Establishments.family_restaurant:
                     activationNums = new int[2] { 9, 10 };
                     break;
-                case Establishments.Apple_Orchard:
+                case Establishments.apple_orchard:
                     activationNums = new int[1] { 10 };
                     break;
-                case Establishments.Fruit_And_Vegetable_Market:
+                case Establishments.fruit_and_vegetable_market:
                     activationNums = new int[2] { 11, 12 };
                     break;
             }

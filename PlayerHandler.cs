@@ -20,13 +20,15 @@ namespace MachiKoro_ML
             name = nm;
             this.game = game;
             numCoins = 3;
-            AddCard(new Card(Card.Establishments.Wheat_Field, this));
-            AddCard(new Card(Card.Establishments.Bakery, this));
+            AddCard(new Card(Card.Establishments.wheat_field, this));
+            AddCard(new Card(Card.Establishments.bakery, this));
         }
 
-        public void ChangeCoins(int c)
+        public bool ChangeCoins(int c)
         {
+            if(c < 0 && numCoins + c < 0) { return false; }
             numCoins += c;
+            return true;
         }
         public void AddCard(Card card)
         {
