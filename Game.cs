@@ -54,7 +54,7 @@ namespace MachiKoro_ML
             //Buy phase
             while (true)
             {
-                Console.WriteLine("Buy a card, or pass");
+                Console.WriteLine("\r\nBuy a card, or pass\r\n");
                 string str = Console.ReadLine();
                 string[] args = str.Split(' ');
                 if (args[0].ToLower().Equals("pass"))
@@ -71,6 +71,7 @@ namespace MachiKoro_ML
                         {
                             currentPlayer.AddCard(newCard);
                             currentPlayer.ChangeCoins(-newCard.cost);
+                            Console.WriteLine($"\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
                             IncrementTurn();
                             return;
                         }
