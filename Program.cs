@@ -5,6 +5,10 @@ namespace MachiKoro_ML
 {
     class Initialize
     {
+        /*
+         *  TODO:
+         *  
+         */
         public static void Main(String[] args)
         {
             Console.WriteLine("Welcome to Machi Koro!\r\nType 'help' for a list of commands");
@@ -12,14 +16,20 @@ namespace MachiKoro_ML
             prog.ReadCommands();
         }
     }
-    class Program
+    class Program //Rename at some point
     {
+        Game game;
         Command HELP;
+        Command<int> PLAY;
+        Command PLAYER;
+        Command ROLL;
+        Command<int> FORCEROLL;
+        List<object> outCommands;
+        List<object> playingCommands;
         List<object> commandList;
-
         public void ReadCommands()
         {
-            HELP = new Command("help", "shows a list of commands", "help", () =>
+            HELP = new Command("help", "shows a list of currently usable commands", "help", () =>
             {
                 for(int i = 0; i < commandList.Count; i++)
                 {
@@ -28,14 +38,48 @@ namespace MachiKoro_ML
                     Console.WriteLine(output);
                 }
             });
-
-            commandList = new List<object>
+            PLAY = new Command<int>("play", "begins a game with up to four human players", "play <player count>", (x) =>
             {
-                HELP
+                if(x > 4 || x < 1) 
+                {
+                    Console.WriteLine("Must specify between 1 and 4 players");
+                    return; 
+                }
+                Console.WriteLine("Starting a game!");
+                game = new Game(x);
+                commandList = playingCommands;
+            });
+            PLAYER = new Command("player", "shows info about the current player", "player", () =>
+            {
+                Console.WriteLine(game.currentPlayer.GetInfo());
+            });
+            ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
+            {
+                int rollNum = game.currentPlayer.Roll();
+                Console.WriteLine($"Rolled a {rollNum}\r\n");
+                game.EvaluateRoll(rollNum);
+            });
+            FORCEROLL = new Command<int>("froll", "rolls with a predetermined number", "froll <number>", (x) =>
+            {
+                Console.WriteLine($"Forced a {x}\r\n");
+                game.EvaluateRoll(x);
+            });
+
+            playingCommands = new List<object>
+            {
+                HELP,
+                PLAYER,
+                ROLL,
+                FORCEROLL
+            };
+            outCommands = new List<object>
+            {
+                HELP,
+                PLAY
 
             };
-            //Change to only while it should be accepting input
-            while (true)
+            commandList = outCommands;
+            while (true) //Read the console for commands
             {
                 string input = Console.ReadLine();
                 string[] args = input.Split(' ');
@@ -51,7 +95,14 @@ namespace MachiKoro_ML
                             (commandList[i] as Command).Invoke();
                             Console.WriteLine();
                         }
+                        else if(commandList[i] as Command<int> != null && args.Length == 2)
+                        {
+                            Console.WriteLine();
+                            (commandList[i] as Command<int>).Invoke(int.Parse(args[1]));
+                            Console.WriteLine();
+                        }
                     }
+                    
                 }
             }
         }
