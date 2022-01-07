@@ -7,7 +7,6 @@ namespace MachiKoro_ML
     {
         /*
          *  TODO:
-         *  Add balance command
          *  Check function of cafe
          *  Implement remaining cards
          *  Win condition
@@ -28,6 +27,7 @@ namespace MachiKoro_ML
         Command PLAYER;
         Command ROLL;
         Command<int> FORCEROLL;
+        Command BALANCE;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -68,13 +68,19 @@ namespace MachiKoro_ML
                 Console.WriteLine($"Forced a {x}\r\n");
                 game.EvaluateRoll(x);
             });
+            BALANCE = new Command("balance", "shows the coin balance of each player", "balance", () =>
+            {
+                game.PrintBalances();
+            });
+
 
             playingCommands = new List<object>
             {
                 HELP,
                 PLAYER,
                 ROLL,
-                FORCEROLL
+                FORCEROLL,
+                BALANCE
             };
             outCommands = new List<object>
             {
