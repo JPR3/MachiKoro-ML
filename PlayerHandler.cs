@@ -14,14 +14,17 @@ namespace MachiKoro_ML
         List<Card> cards = new List<Card>();
         int diceToRoll = 1;
         Game game;
+        public int numRanches = 0;
+        public int numNature = 0;
+        public int numAgriculture = 0;
 
         public PlayerHandler(Game game, string nm)
         {
             name = nm;
             this.game = game;
             numCoins = 3;
-            AddCard(new Card(Card.Establishments.wheat_field, this));
-            AddCard(new Card(Card.Establishments.bakery, this));
+            AddCard(new Card(Card.Establishments.wheat_field, this, game));
+            AddCard(new Card(Card.Establishments.bakery, this, game));
         }
 
         public bool ChangeCoins(int c)

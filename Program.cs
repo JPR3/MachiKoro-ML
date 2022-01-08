@@ -9,6 +9,8 @@ namespace MachiKoro_ML
          *  TODO:
          *  Implement remaining cards
          *  Win condition
+         *  Optimize est desc using array
+         *  Weight dice rolls
          */
         public static void Main(String[] args)
         {
@@ -26,6 +28,7 @@ namespace MachiKoro_ML
         Command ROLL;
         Command<int> FORCEROLL;
         Command BALANCE;
+        Command<string> FORCEBUY;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -70,7 +73,19 @@ namespace MachiKoro_ML
             {
                 game.PrintBalances();
             });
-
+            FORCEBUY = new Command<string>("fbuy", "buy any card at no cost", "fbuy <card>", (x) =>
+            {
+                if (Enum.TryParse(x.ToLower(), out Card.Establishments est))
+                {
+                    Card newCard = new Card(est, game.currentPlayer, game);
+                    game.currentPlayer.AddCard(newCard);
+                    Console.WriteLine($"Force-bought {newCard}");
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a valid card name");
+                }
+            });
 
             playingCommands = new List<object>
             {
@@ -78,6 +93,7 @@ namespace MachiKoro_ML
                 PLAYER,
                 ROLL,
                 FORCEROLL,
+                FORCEBUY,
                 BALANCE
             };
             outCommands = new List<object>
@@ -107,6 +123,12 @@ namespace MachiKoro_ML
                         {
                             Console.WriteLine();
                             (commandList[i] as Command<int>).Invoke(int.Parse(args[1]));
+                            Console.WriteLine();
+                        }
+                        else if (commandList[i] as Command<string> != null && args.Length == 2)
+                        {
+                            Console.WriteLine();
+                            (commandList[i] as Command<string>).Invoke(args[1]);
                             Console.WriteLine();
                         }
                     }

@@ -33,9 +33,11 @@ namespace MachiKoro_ML
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
         Action<PlayerHandler> effect;
+        Game game;
 
-        public Card(Establishments estType, PlayerHandler owner)
+        public Card(Establishments estType, PlayerHandler owner, Game game)
         {
+            this.game = game;
             this.owner = owner;
             est = estType;
             SetValues(est); //Sets the activationNums, cost and effect based on establishment type
@@ -57,6 +59,7 @@ namespace MachiKoro_ML
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
                         owner.ChangeCoins(1);
+                        owner.numAgriculture++;
                     };
                     break;
                 case Establishments.ranch:
@@ -66,6 +69,7 @@ namespace MachiKoro_ML
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
                         owner.ChangeCoins(1);
+                        owner.numRanches++;
                     };
                     break;
                 case Establishments.bakery:
@@ -118,34 +122,149 @@ namespace MachiKoro_ML
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
                         owner.ChangeCoins(1);
+                        owner.numNature++;
                     };
                     break;
                 case Establishments.stadium:
                     activationNums = new int[1] { 6 };
+                    cost = 6;
+                    effect = (caller) =>
+                    {
+                        if(caller == owner)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                            foreach (PlayerHandler player in game.players)
+                            {
+                                if(player.ChangeCoins(-2))
+                                {
+                                    owner.ChangeCoins(2);
+                                }
+                                else if(player.ChangeCoins(-2))
+                                {
+                                    owner.ChangeCoins(1);
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"...but couldn't steal from {player}");
+                                }
+                            }
+                        }
+                    };
                     break;
                 case Establishments.tv_station:
                     activationNums = new int[1] { 6 };
+                    cost = 7;
+                    effect = (caller) =>
+                    {
+                        if (caller == owner)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                            //Prompt to pick another player
+                            Console.WriteLine($"{owner}, pick another player to steal up to 5 coins from");
+                            game.PrintBalances();
+                            PlayerHandler target = null;
+                            while(true)
+                            {
+                                string selection = Console.ReadLine();
+                                foreach (PlayerHandler player in game.players)
+                                {
+                                    if(selection.ToLower().Equals(player.ToString().ToLower()))
+                                    {
+                                        target = player;
+                                        break;
+                                    }
+                                }
+                                if(target != null) { break; }
+                            }
+                            int maxCoins = target.numCoins;
+                            if(maxCoins > 5) { maxCoins = 5; }
+                            target.ChangeCoins(-maxCoins);
+                            owner.ChangeCoins(maxCoins);
+                            Console.WriteLine($"Stole {maxCoins} from {target}");
+
+
+                        }
+                    };
                     break;
                 case Establishments.business_center:
                     activationNums = new int[1] { 6 };
                     break;
                 case Establishments.cheese_factory:
                     activationNums = new int[1] { 7 };
+                    cost = 5;
+                    effect = (caller) =>
+                    {
+                        if (caller == owner)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                            owner.ChangeCoins(3 * owner.numRanches);
+                        }
+                    };
                     break;
                 case Establishments.furniture_factory:
                     activationNums = new int[1] { 8 };
+                    cost = 3;
+                    effect = (caller) =>
+                    {
+                        if (caller == owner)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                            owner.ChangeCoins(3 * owner.numNature);
+                        }
+                    };
                     break;
                 case Establishments.mine:
                     activationNums = new int[1] { 9 };
+                    cost = 6;
+                    effect = (caller) =>
+                    {
+                        Console.WriteLine($"{owner}'s {this} activated!");
+                        owner.ChangeCoins(5);
+                    };
                     break;
                 case Establishments.family_restaurant:
                     activationNums = new int[2] { 9, 10 };
+                    cost = 3;
+                    effect = (caller) =>
+                    {
+                        if (caller != owner)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (caller.ChangeCoins(-2))
+                            {
+                                owner.ChangeCoins(2);
+                            }
+                            else if(caller.ChangeCoins(-1))
+                            {
+                                owner.ChangeCoins(1);
+                            }
+                            else
+                            {
+                                Console.WriteLine("...but there was nothing to steal!");
+                            }
+                        }
+                    };
                     break;
                 case Establishments.apple_orchard:
                     activationNums = new int[1] { 10 };
+                    cost = 3;
+                    effect = (caller) =>
+                    {
+                        Console.WriteLine($"{owner}'s {this} activated!");
+                        owner.ChangeCoins(3);
+                    };
                     break;
                 case Establishments.fruit_and_vegetable_market:
                     activationNums = new int[2] { 11, 12 };
+                    cost = 2;
+                    effect = (caller) =>
+                    {
+                        if (caller == owner)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                            owner.ChangeCoins(2 * owner.numAgriculture);
+                        }
+                    };
                     break;
             }
         }

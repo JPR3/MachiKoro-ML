@@ -8,7 +8,7 @@ namespace MachiKoro_ML
 {
     public class Game
     {
-        PlayerHandler[] players;
+        public readonly PlayerHandler[] players;
         public PlayerHandler currentPlayer { get; private set; }
         int currentIndex;
         public List<Card> allCards = new List<Card>();
@@ -67,7 +67,7 @@ namespace MachiKoro_ML
                 {
                     if (Enum.TryParse(args[1].ToLower(), out Card.Establishments est))
                     {
-                        Card newCard = new Card(est, currentPlayer);
+                        Card newCard = new Card(est, currentPlayer, this);
                         if (newCard.cost <= currentPlayer.numCoins)
                         {
                             currentPlayer.AddCard(newCard);
