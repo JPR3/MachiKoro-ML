@@ -47,14 +47,15 @@ namespace MachiKoro_ML
             PrintBalances();
             if (currentPlayer.numCoins == 0)
             {
-                Console.WriteLine($"{currentPlayer} does not have enough money to buy anything");
+                Console.WriteLine($"\r\n{currentPlayer} does not have enough money to buy anything");
                 IncrementTurn();
                 return;
             }
             //Buy phase
+            Console.WriteLine("\r\nBuy a card, or pass\r\n");
+            Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer.numCoins)}");
             while (true)
             {
-                Console.WriteLine("\r\nBuy a card, or pass\r\n");
                 string str = Console.ReadLine();
                 string[] args = str.Split(' ');
                 if (args[0].ToLower().Equals("pass"))
@@ -64,14 +65,14 @@ namespace MachiKoro_ML
                 }
                 else if (args[0].ToLower().Equals("buy"))
                 {
-                    if (Enum.TryParse(args[1], out Card.Establishments est))
+                    if (Enum.TryParse(args[1].ToLower(), out Card.Establishments est))
                     {
                         Card newCard = new Card(est, currentPlayer);
                         if (newCard.cost <= currentPlayer.numCoins)
                         {
                             currentPlayer.AddCard(newCard);
                             currentPlayer.ChangeCoins(-newCard.cost);
-                            Console.WriteLine($"\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                            Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
                             IncrementTurn();
                             return;
                         }

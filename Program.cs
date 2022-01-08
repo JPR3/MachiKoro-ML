@@ -7,10 +7,8 @@ namespace MachiKoro_ML
     {
         /*
          *  TODO:
-         *  Check function of cafe
          *  Implement remaining cards
          *  Win condition
-         *  Improve card buying process
          */
         public static void Main(String[] args)
         {
@@ -60,12 +58,12 @@ namespace MachiKoro_ML
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
                 int rollNum = game.currentPlayer.Roll();
-                Console.WriteLine($"Rolled a {rollNum}\r\n");
+                Console.WriteLine($"Rolled a {rollNum}");
                 game.EvaluateRoll(rollNum);
             });
             FORCEROLL = new Command<int>("froll", "rolls with a predetermined number", "froll <number>", (x) =>
             {
-                Console.WriteLine($"Forced a {x}\r\n");
+                Console.WriteLine($"Forced a {x}");
                 game.EvaluateRoll(x);
             });
             BALANCE = new Command("balance", "shows the coin balance of each player", "balance", () =>
