@@ -1,0 +1,5 @@
+﻿TODO:
+Implement remaining cards
+Win condition
+Optimize est desc using array
+Weight dice rolls

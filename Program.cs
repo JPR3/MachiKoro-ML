@@ -5,13 +5,6 @@ namespace MachiKoro_ML
 {
     class Initialize
     {
-        /*
-         *  TODO:
-         *  Implement remaining cards
-         *  Win condition
-         *  Optimize est desc using array
-         *  Weight dice rolls
-         */
         public static void Main(String[] args)
         {
             Console.WriteLine("Welcome to Machi Koro!\r\nType 'help' for a list of commands");
