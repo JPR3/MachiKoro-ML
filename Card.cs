@@ -29,7 +29,8 @@ namespace MachiKoro_ML
 
 
         readonly Establishments est;
-        public readonly PlayerHandler owner;
+        public bool isTradable { get; private set; }
+        PlayerHandler owner;
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
         Action<PlayerHandler> effect;
@@ -47,6 +48,10 @@ namespace MachiKoro_ML
         {
             effect.Invoke(caller);
         }
+        public void SetNewOwner(PlayerHandler newOwner)
+        {
+            owner = newOwner;
+        }
 
         void SetValues(Establishments type)
         {
@@ -55,6 +60,7 @@ namespace MachiKoro_ML
                 case Establishments.wheat_field:
                     activationNums = new int[1] { 1 };
                     cost = 1;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
@@ -65,6 +71,7 @@ namespace MachiKoro_ML
                 case Establishments.ranch:
                     activationNums = new int[1] { 2 };
                     cost = 1;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
@@ -75,6 +82,7 @@ namespace MachiKoro_ML
                 case Establishments.bakery:
                     activationNums = new int[2] { 2, 3 };
                     cost = 1;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -87,6 +95,7 @@ namespace MachiKoro_ML
                 case Establishments.cafe:
                     activationNums = new int[1] { 3 };
                     cost = 2;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         if(caller != owner)
@@ -106,6 +115,7 @@ namespace MachiKoro_ML
                 case Establishments.convenience_store:
                     activationNums = new int[1] { 4 };
                     cost = 2;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -118,6 +128,7 @@ namespace MachiKoro_ML
                 case Establishments.forest:
                     activationNums = new int[1] { 5 };
                     cost = 3;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
@@ -128,6 +139,7 @@ namespace MachiKoro_ML
                 case Establishments.stadium:
                     activationNums = new int[1] { 6 };
                     cost = 6;
+                    isTradable = false;
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -154,6 +166,7 @@ namespace MachiKoro_ML
                 case Establishments.tv_station:
                     activationNums = new int[1] { 6 };
                     cost = 7;
+                    isTradable = false;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -163,7 +176,7 @@ namespace MachiKoro_ML
                             Console.WriteLine($"{owner}, pick another player to steal up to 5 coins from");
                             game.PrintBalances();
                             PlayerHandler target = null;
-                            while(true)
+                            while(target == null)
                             {
                                 string selection = Console.ReadLine();
                                 foreach (PlayerHandler player in game.players)
@@ -171,11 +184,10 @@ namespace MachiKoro_ML
                                     if(selection.ToLower().Equals(player.ToString().ToLower()))
                                     {
                                         target = player;
-                                        break;
                                     }
                                 }
-                                if(target != null) { break; }
                             }
+                            //Steal up to 5 coins from target
                             int maxCoins = target.numCoins;
                             if(maxCoins > 5) { maxCoins = 5; }
                             target.ChangeCoins(-maxCoins);
@@ -188,10 +200,92 @@ namespace MachiKoro_ML
                     break;
                 case Establishments.business_center:
                     activationNums = new int[1] { 6 };
+                    cost = 8;
+                    isTradable = false;
+                    effect = (caller) =>
+                    {
+                        if(caller == owner)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                            //Prompt to pick a player
+                            Console.WriteLine($"{owner}, pick another player to trade a card with");
+                            foreach(PlayerHandler player in game.players)
+                            {
+                                if(player != owner)
+                                {
+                                    Console.WriteLine($"\r\n{player}");
+                                    foreach (Card c in player.GetCardsAsArray())
+                                    {
+                                        if(c.isTradable)
+                                        {
+                                            Console.WriteLine($"\t{c}");
+                                        }
+                                        
+                                    }
+
+                                }
+                            }
+                            PlayerHandler targetPlayer = null;
+                            while (targetPlayer == null)
+                            {
+                                string selection = Console.ReadLine();
+                                foreach (PlayerHandler player in game.players)
+                                {
+                                    if (selection.ToLower().Equals(player.ToString().ToLower()))
+                                    {
+                                        targetPlayer = player;
+                                    }
+                                }
+                            }
+                            //Prompt to pick a card from player
+                            Console.WriteLine("Pick a card to take");
+                            Card targetCard = null;
+                            while (targetCard == null)
+                            {
+                                string selection = Console.ReadLine();
+                                Card[] cards = targetPlayer.GetCardsAsArray();
+                                foreach (Card card in cards)
+                                {
+                                    if (card.isTradable && selection.ToLower().Equals(card.ToString()))
+                                    {
+                                        targetCard = card;
+                                    }
+                                }
+                            }
+                            //Prompt to pick a card from self
+                            Console.WriteLine("Pick a card to give away");
+                            foreach (Card c in owner.GetCardsAsArray())
+                            {
+                                if(c.isTradable)
+                                {
+                                    Console.WriteLine($"\t{c}");
+                                }
+                            }
+                            Card ownerCard = null;
+                            while(ownerCard == null)
+                            {
+                                string selection = Console.ReadLine();
+                                Card[] cards = owner.GetCardsAsArray();
+                                foreach (Card card in cards)
+                                {
+                                    if (card.isTradable && selection.ToLower().Equals(card.ToString()))
+                                    {
+                                        ownerCard = card;
+                                    }
+                                }
+                            }
+                            //Make the trade
+                            Console.WriteLine($"Traded {owner}'s {ownerCard} for {targetPlayer}'s {targetCard}");
+                            owner.ReplaceCard(ownerCard, targetCard);
+                            targetPlayer.ReplaceCard(targetCard, ownerCard);
+
+                        }
+                    };
                     break;
                 case Establishments.cheese_factory:
                     activationNums = new int[1] { 7 };
                     cost = 5;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -204,6 +298,7 @@ namespace MachiKoro_ML
                 case Establishments.furniture_factory:
                     activationNums = new int[1] { 8 };
                     cost = 3;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -216,6 +311,7 @@ namespace MachiKoro_ML
                 case Establishments.mine:
                     activationNums = new int[1] { 9 };
                     cost = 6;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
@@ -225,6 +321,7 @@ namespace MachiKoro_ML
                 case Establishments.family_restaurant:
                     activationNums = new int[2] { 9, 10 };
                     cost = 3;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         if (caller != owner)
@@ -248,6 +345,7 @@ namespace MachiKoro_ML
                 case Establishments.apple_orchard:
                     activationNums = new int[1] { 10 };
                     cost = 3;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         Console.WriteLine($"{owner}'s {this} activated!");
@@ -257,6 +355,7 @@ namespace MachiKoro_ML
                 case Establishments.fruit_and_vegetable_market:
                     activationNums = new int[2] { 11, 12 };
                     cost = 2;
+                    isTradable = true;
                     effect = (caller) =>
                     {
                         if (caller == owner)

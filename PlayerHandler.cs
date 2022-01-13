@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace MachiKoro_ML
 {
@@ -38,6 +39,20 @@ namespace MachiKoro_ML
             cards.Add(card);
             game.allCards.Add(card);
         }
+        public void ReplaceCard(Card oldCard, Card newCard)
+        {
+            if(cards.Contains(oldCard))
+            {
+                cards.Remove(oldCard);
+                cards.Add(newCard);
+                newCard.SetNewOwner(this);
+            }
+            else
+            {
+                Console.WriteLine($"{this}'s card to trade away does not exist!");
+                Trace.TraceError($"{this} does not contain {oldCard} card, or it cannot be found");
+            }
+        }
 
         public int Roll()
         {
@@ -57,6 +72,10 @@ namespace MachiKoro_ML
                 str += $"\t{cards[i]}\r\n";
             }
             return str;
+        }
+        public Card[] GetCardsAsArray()
+        {
+            return cards.ToArray();
         }
     }
 }
