@@ -3,4 +3,3 @@
 	Weight dice rolls
 QOL:
 	Sort cards when viewing them (activation nums)
-	Optimize est desc using array
