@@ -13,7 +13,7 @@ namespace MachiKoro_ML
         public int numCoins { get; private set; }
         Random random = new Random();
         List<Card> cards = new List<Card>();
-        int diceToRoll = 1;
+        bool rollTwo = false;
         Game game;
         public int numRanches = 0;
         public int numNature = 0;
@@ -56,7 +56,13 @@ namespace MachiKoro_ML
 
         public int Roll()
         {
-            return random.Next(1, (6 * diceToRoll) + 1);
+            int sum = 0;
+            if(rollTwo)
+            {
+                sum += random.Next(1, 7);
+            }
+            sum += random.Next(1, 7);
+            return sum;
         }
 
         override public string ToString()

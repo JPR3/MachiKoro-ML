@@ -1,5 +1,4 @@
 ﻿FEATURE:
 	Win conditions
-	Weight dice rolls
 QOL:
 	Sort cards when viewing them (activation nums)
