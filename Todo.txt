@@ -1,4 +1,12 @@
 ﻿FEATURE:
 	Win conditions
+		- Train Station
+		- Shopping Mall
+		- Amusement Park
+		- Radio Tower
 QOL:
 	Sort cards when viewing them (activation nums)
+	Make choosing to roll 2 dice a toggle
+
+POTENTIAL:
+	Introduce card symbols to increase ease of understanding of some cards (i.e. shopping mall)
