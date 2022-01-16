@@ -121,9 +121,13 @@ namespace MachiKoro_ML
                         if(caller != owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            if(caller.ChangeCoins(-1))
+                            int targetSteal = 1; //Set to 2 if has mall
+                            int stealNum = caller.GetMaxSteal(targetSteal);
+                            if(stealNum != 0)
                             {
-                                owner.ChangeCoins(1);
+                                caller.ChangeCoins(-stealNum);
+                                owner.ChangeCoins(stealNum);
+                                Console.WriteLine($"Stole {stealNum} from {caller}");
                             }
                             else
                             {
@@ -167,17 +171,17 @@ namespace MachiKoro_ML
                             Console.WriteLine($"{owner}'s {this} activated!");
                             foreach (PlayerHandler player in game.players)
                             {
-                                if(player.ChangeCoins(-2))
+                                if(player == owner) { continue; }
+                                int stealNum = player.GetMaxSteal(2);
+                                if (stealNum != 0)
                                 {
-                                    owner.ChangeCoins(2);
-                                }
-                                else if(player.ChangeCoins(-2))
-                                {
-                                    owner.ChangeCoins(1);
+                                    player.ChangeCoins(-stealNum);
+                                    owner.ChangeCoins(stealNum);
+                                    Console.WriteLine($"Stole {stealNum} from {player}");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"...but couldn't steal from {player}");
+                                    Console.WriteLine("...but there was nothing to steal!");
                                 }
                             }
                         }
@@ -208,11 +212,10 @@ namespace MachiKoro_ML
                                 }
                             }
                             //Steal up to 5 coins from target
-                            int maxCoins = target.numCoins;
-                            if(maxCoins > 5) { maxCoins = 5; }
-                            target.ChangeCoins(-maxCoins);
-                            owner.ChangeCoins(maxCoins);
-                            Console.WriteLine($"Stole {maxCoins} from {target}");
+                            int stealNum = target.GetMaxSteal(5);
+                            target.ChangeCoins(-stealNum);
+                            owner.ChangeCoins(stealNum);
+                            Console.WriteLine($"\r\nStole {stealNum} from {target}");
 
 
                         }
@@ -347,13 +350,13 @@ namespace MachiKoro_ML
                         if (caller != owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            if (caller.ChangeCoins(-2))
+                            int targetSteal = 2; //Set to 3 if has mall
+                            int stealNum = caller.GetMaxSteal(targetSteal);
+                            if (stealNum != 0)
                             {
-                                owner.ChangeCoins(2);
-                            }
-                            else if(caller.ChangeCoins(-1))
-                            {
-                                owner.ChangeCoins(1);
+                                caller.ChangeCoins(-stealNum);
+                                owner.ChangeCoins(stealNum);
+                                Console.WriteLine($"Stole {stealNum} from {caller}");
                             }
                             else
                             {

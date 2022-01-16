@@ -31,7 +31,12 @@ namespace MachiKoro_ML
         {
             canRollTwo = true;
         }
-
+        public int GetMaxSteal(int targetMax)
+        {
+            int toSteal = numCoins;
+            if(toSteal > targetMax) { toSteal = targetMax; }
+            return toSteal;
+        }
         public bool ChangeCoins(int c)
         {
             if(c < 0 && numCoins + c < 0) { return false; }
