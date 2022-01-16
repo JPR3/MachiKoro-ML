@@ -1,4 +1,0 @@
-﻿FEATURE:
-	Win conditions
-QOL:
-	Sort cards when viewing them (activation nums)
