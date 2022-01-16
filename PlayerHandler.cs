@@ -13,7 +13,7 @@ namespace MachiKoro_ML
         public int numCoins { get; private set; }
         Random random = new Random();
         List<Card> cards = new List<Card>();
-        bool rollTwo = false;
+        bool canRollTwo = false;
         Game game;
         public int numRanches = 0;
         public int numNature = 0;
@@ -26,6 +26,10 @@ namespace MachiKoro_ML
             numCoins = 3;
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
+        }
+        public void ChangeRollTwo()
+        {
+            canRollTwo = true;
         }
 
         public bool ChangeCoins(int c)
@@ -57,9 +61,26 @@ namespace MachiKoro_ML
         public int Roll()
         {
             int sum = 0;
-            if(rollTwo)
+            if(canRollTwo)
             {
-                sum += random.Next(1, 7);
+                Console.WriteLine("Roll two dice? (Y/N)");
+                while(true)
+                {
+                    string str = Console.ReadLine();
+                    if (str.ToLower().Equals("y"))
+                    {
+                        sum += random.Next(1, 7);
+                        break;
+                    }
+                    else if(str.ToLower().Equals("n"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter 'y' or 'n'");
+                    }
+                }
             }
             sum += random.Next(1, 7);
             return sum;

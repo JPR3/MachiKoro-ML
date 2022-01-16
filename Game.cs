@@ -34,6 +34,7 @@ namespace MachiKoro_ML
         {
             foreach (Card c in allCards)
             {
+                if(c.activationNums == null) { continue; }
                 for (int i = 0; i < c.activationNums.Length; i++)
                 {
                     if (c.activationNums[i] == roll)

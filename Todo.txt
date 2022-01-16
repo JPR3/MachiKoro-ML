@@ -1,9 +1,9 @@
 ﻿FEATURE:
 	Win conditions
-		- Train Station
 		- Shopping Mall
 		- Amusement Park
 		- Radio Tower
+		- Collect all 4 to win
 QOL:
 	Sort cards when viewing them (activation nums)
 	Make choosing to roll 2 dice a toggle

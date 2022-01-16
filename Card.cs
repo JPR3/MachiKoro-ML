@@ -24,7 +24,8 @@ namespace MachiKoro_ML
             mine,
             family_restaurant,
             apple_orchard,
-            fruit_and_vegetable_market
+            fruit_and_vegetable_market,
+            train_station
         };
 
 
@@ -47,7 +48,8 @@ namespace MachiKoro_ML
             "Mine: 6 coins - activates on 9\r\n\tGet 5 coins from the bank, on anyone's turn",
             "Family resturant: 3 coins - activates on 9-10\r\n\tGet 2 coins from the player who rolled the dice",
             "Apple orchard: 3 coins - activates on 10\r\n\tGet 3 coins from the bank, on anyone's turn",
-            "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only"
+            "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only",
+            "Train station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice"
         };
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
@@ -383,6 +385,14 @@ namespace MachiKoro_ML
                         }
                     };
                     break;
+                case Establishments.train_station:
+                    activationNums = null;
+                    cost = 4;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner's values to represent abilities of new card
+                    owner.ChangeRollTwo();
+                    break;
             }
         }
 
@@ -399,6 +409,9 @@ namespace MachiKoro_ML
             str += $"{GetEstDesc(Establishments.cafe)}\r\n{GetEstDesc(Establishments.convenience_store)}\r\n{GetEstDesc(Establishments.forest)}" +
                 $"\r\n{GetEstDesc(Establishments.furniture_factory)}\r\n{GetEstDesc(Establishments.family_restaurant)}\r\n" +
                 $"{GetEstDesc(Establishments.apple_orchard)}\r\n";
+            if(coins < 4) { return str; }
+            //Four costs
+            str += $"{GetEstDesc(Establishments.train_station)}\r\n";
             if(coins < 5) { return str; }
             //Five costs
             str += $"{GetEstDesc(Establishments.cheese_factory)}\r\n";
