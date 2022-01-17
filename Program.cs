@@ -22,6 +22,7 @@ namespace MachiKoro_ML
         Command<int> FORCEROLL;
         Command BALANCE;
         Command<string> FORCEBUY;
+        Command EXIT;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -79,7 +80,12 @@ namespace MachiKoro_ML
                     Console.WriteLine("Please enter a valid card name");
                 }
             });
-
+            EXIT = new Command("exit", "stops the current game", "exit", () =>
+            {
+                Console.Clear();
+                Console.WriteLine("Game ended");
+                commandList = outCommands;
+            });
             playingCommands = new List<object>
             {
                 HELP,
@@ -87,7 +93,8 @@ namespace MachiKoro_ML
                 ROLL,
                 FORCEROLL,
                 FORCEBUY,
-                BALANCE
+                BALANCE,
+                EXIT
             };
             outCommands = new List<object>
             {
