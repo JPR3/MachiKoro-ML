@@ -25,7 +25,8 @@ namespace MachiKoro_ML
             family_restaurant,
             apple_orchard,
             fruit_and_vegetable_market,
-            train_station
+            train_station,
+            shopping_mall
         };
 
 
@@ -49,7 +50,8 @@ namespace MachiKoro_ML
             "Family resturant: 3 coins - activates on 9-10\r\n\tGet 2 coins from the player who rolled the dice",
             "Apple orchard: 3 coins - activates on 10\r\n\tGet 3 coins from the bank, on anyone's turn",
             "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only",
-            "Train station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice"
+            "Train station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice",
+            "Shopping mall: 10 coins - LANDMARK CARD\r\n\tYour Bakeries, Cafes, Convenience stores, and Family restaurants earn/steal an extra coin"
         };
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
@@ -108,7 +110,9 @@ namespace MachiKoro_ML
                         if(caller == owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            owner.ChangeCoins(1);
+                            int change = 1;
+                            if (owner.hasMall) { change = 2; }
+                            owner.ChangeCoins(change);
                         }
                     };
                     break;
@@ -122,6 +126,7 @@ namespace MachiKoro_ML
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
                             int targetSteal = 1; //Set to 2 if has mall
+                            if(owner.hasMall) { targetSteal = 2; }
                             int stealNum = caller.GetMaxSteal(targetSteal);
                             if(stealNum != 0)
                             {
@@ -145,7 +150,9 @@ namespace MachiKoro_ML
                         if(caller == owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            owner.ChangeCoins(3);
+                            int change = 3;
+                            if (owner.hasMall) { change = 4; }
+                            owner.ChangeCoins(change);
                         }
                     };
                     break;
@@ -351,6 +358,7 @@ namespace MachiKoro_ML
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
                             int targetSteal = 2; //Set to 3 if has mall
+                            if (owner.hasMall) { targetSteal = 3; }
                             int stealNum = caller.GetMaxSteal(targetSteal);
                             if (stealNum != 0)
                             {
@@ -396,6 +404,14 @@ namespace MachiKoro_ML
                     //Change owner's values to represent abilities of new card
                     owner.ChangeRollTwo();
                     break;
+                case Establishments.shopping_mall:
+                    activationNums = null;
+                    cost = 10;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner values
+                    owner.AddMall();
+                    break;
             }
         }
 
@@ -427,6 +443,9 @@ namespace MachiKoro_ML
             if(coins < 8) { return str; }
             //Eight costs
             str += $"{GetEstDesc(Establishments.business_center)}\r\n";
+            if(coins < 10) { return str; }
+            //Ten costs
+            str += $"{GetEstDesc(Establishments.shopping_mall)}\r\n";
             return str; 
         }
         static string GetEstDesc(Establishments est)

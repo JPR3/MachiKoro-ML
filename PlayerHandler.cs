@@ -14,6 +14,7 @@ namespace MachiKoro_ML
         Random random = new Random();
         List<Card> cards = new List<Card>();
         bool canRollTwo = false;
+        public bool hasMall { get; private set; } = false;
         Game game;
         public int numRanches = 0;
         public int numNature = 0;
@@ -30,6 +31,10 @@ namespace MachiKoro_ML
         public void ChangeRollTwo()
         {
             canRollTwo = true;
+        }
+        public void AddMall()
+        {
+            hasMall = true;
         }
         public int GetMaxSteal(int targetMax)
         {
