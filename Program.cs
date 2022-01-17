@@ -23,6 +23,7 @@ namespace MachiKoro_ML
         Command BALANCE;
         Command<string> FORCEBUY;
         Command EXIT;
+        Command RULES;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -86,6 +87,13 @@ namespace MachiKoro_ML
                 Console.WriteLine("Game ended");
                 commandList = outCommands;
             });
+            RULES = new Command("rules", "prints the rules of the game", "rules", () =>
+            {
+                Console.WriteLine("Machi Koro is a game played with 2 to 4 players, where players take turns rolling dice and collecting income\r\n" +
+                    "with the goal of buying all four landmark cards to win. Players earn money through the establishments (cards) they own,\r\n" +
+                    "as each card has an effect related to earning money that will activate when it's corresponding number is rolled.\r\n" +
+                    "A turn consists of rolling, earning income, and buying up to one establishment.");
+            });
             playingCommands = new List<object>
             {
                 HELP,
@@ -99,7 +107,8 @@ namespace MachiKoro_ML
             outCommands = new List<object>
             {
                 HELP,
-                PLAY
+                PLAY,
+                RULES
 
             };
             commandList = outCommands;
