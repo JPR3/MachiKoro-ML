@@ -26,7 +26,8 @@ namespace MachiKoro_ML
             apple_orchard,
             fruit_and_vegetable_market,
             train_station,
-            shopping_mall
+            shopping_mall,
+            amusement_park
         };
 
 
@@ -51,7 +52,8 @@ namespace MachiKoro_ML
             "Apple orchard: 3 coins - activates on 10\r\n\tGet 3 coins from the bank, on anyone's turn",
             "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only",
             "Train station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice",
-            "Shopping mall: 10 coins - LANDMARK CARD\r\n\tYour Bakeries, Cafes, Convenience stores, and Family restaurants earn/steal an extra coin"
+            "Shopping mall: 10 coins - LANDMARK CARD\r\n\tYour Bakeries, Cafes, Convenience stores, and Family restaurants earn/steal an extra coin",
+            "Amusement park: 16 coins - LANDMARK CARD\r\n\tIf you roll doubles, take another turn"
         };
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
@@ -402,7 +404,7 @@ namespace MachiKoro_ML
                     isTradable = false;
                     effect = null;
                     //Change owner's values to represent abilities of new card
-                    owner.ChangeRollTwo();
+                    owner.AddRollTwo();
                     break;
                 case Establishments.shopping_mall:
                     activationNums = null;
@@ -411,6 +413,14 @@ namespace MachiKoro_ML
                     effect = null;
                     //Change owner values
                     owner.AddMall();
+                    break;
+                case Establishments.amusement_park:
+                    activationNums = null;
+                    cost = 16;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner values
+                    owner.AddPark();
                     break;
             }
         }

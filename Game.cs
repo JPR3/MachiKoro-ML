@@ -30,7 +30,7 @@ namespace MachiKoro_ML
             currentPlayer = players[currentIndex];
             Console.WriteLine($"{currentPlayer}'s turn!");
         }
-        public void EvaluateRoll(int roll)
+        public void EvaluateRoll(int roll, bool doubles)
         {
             foreach (Card c in allCards)
             {
@@ -49,7 +49,14 @@ namespace MachiKoro_ML
             if (currentPlayer.numCoins == 0)
             {
                 Console.WriteLine($"\r\n{currentPlayer} does not have enough money to buy anything");
-                IncrementTurn();
+                if(!doubles)
+                {
+                    IncrementTurn();
+                }
+                else
+                {
+                    Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                }
                 return;
             }
             //Buy phase
@@ -61,7 +68,14 @@ namespace MachiKoro_ML
                 string[] args = str.Split(' ');
                 if (args[0].ToLower().Equals("pass"))
                 {
-                    IncrementTurn();
+                    if (!doubles)
+                    {
+                        IncrementTurn();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    }
                     return;
                 }
                 else if (args[0].ToLower().Equals("buy"))
@@ -74,7 +88,14 @@ namespace MachiKoro_ML
                             currentPlayer.AddCard(newCard);
                             currentPlayer.ChangeCoins(-newCard.cost);
                             Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
-                            IncrementTurn();
+                            if (!doubles)
+                            {
+                                IncrementTurn();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                            }
                             return;
                         }
                         else

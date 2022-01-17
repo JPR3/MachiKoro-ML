@@ -15,6 +15,7 @@ namespace MachiKoro_ML
         List<Card> cards = new List<Card>();
         bool canRollTwo = false;
         public bool hasMall { get; private set; } = false;
+        public bool hasPark { get; private set; } = false;
         Game game;
         public int numRanches = 0;
         public int numNature = 0;
@@ -28,13 +29,17 @@ namespace MachiKoro_ML
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
         }
-        public void ChangeRollTwo()
+        public void AddRollTwo()
         {
             canRollTwo = true;
         }
         public void AddMall()
         {
             hasMall = true;
+        }
+        public void AddPark()
+        {
+            hasPark = true;
         }
         public int GetMaxSteal(int targetMax)
         {
@@ -68,9 +73,11 @@ namespace MachiKoro_ML
             }
         }
 
-        public int Roll()
+        public RollData Roll()
         {
-            int sum = 0;
+            int firstRoll;
+            int secondRoll = 0;
+            firstRoll = random.Next(1, 7);
             if(canRollTwo)
             {
                 Console.WriteLine("Roll two dice? (Y/N)");
@@ -79,7 +86,7 @@ namespace MachiKoro_ML
                     string str = Console.ReadLine();
                     if (str.ToLower().Equals("y"))
                     {
-                        sum += random.Next(1, 7);
+                        secondRoll = random.Next(1, 7);
                         break;
                     }
                     else if(str.ToLower().Equals("n"))
@@ -92,8 +99,7 @@ namespace MachiKoro_ML
                     }
                 }
             }
-            sum += random.Next(1, 7);
-            return sum;
+            return new RollData(firstRoll + secondRoll, (firstRoll == secondRoll) && hasPark);
         }
 
         override public string ToString()
@@ -113,6 +119,17 @@ namespace MachiKoro_ML
         public Card[] GetCardsAsArray()
         {
             return cards.ToArray();
+        }
+    }
+    public class RollData
+    {
+        public int rollVal;
+        public bool doubles;
+
+        public RollData(int val, bool db)
+        {
+            rollVal = val;
+            doubles = db;
         }
     }
 }

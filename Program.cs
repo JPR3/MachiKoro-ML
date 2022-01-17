@@ -55,14 +55,19 @@ namespace MachiKoro_ML
             });
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
-                int rollNum = game.currentPlayer.Roll();
+                RollData data = game.currentPlayer.Roll();
+                int rollNum = data.rollVal;
                 Console.WriteLine($"Rolled a {rollNum}");
-                game.EvaluateRoll(rollNum);
+                if(data.doubles)
+                {
+                    Console.WriteLine("Doubles!");
+                }
+                game.EvaluateRoll(rollNum, data.doubles);
             });
             FORCEROLL = new Command<int>("froll", "rolls with a predetermined number", "froll <number>", (x) =>
             {
                 Console.WriteLine($"Forced a {x}");
-                game.EvaluateRoll(x);
+                game.EvaluateRoll(x, false);
             });
             BALANCE = new Command("balance", "shows the coin balance of each player", "balance", () =>
             {
