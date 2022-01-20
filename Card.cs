@@ -27,7 +27,8 @@ namespace MachiKoro_ML
             fruit_and_vegetable_market,
             train_station,
             shopping_mall,
-            amusement_park
+            amusement_park,
+            radio_tower
         };
 
 
@@ -53,7 +54,8 @@ namespace MachiKoro_ML
             "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only",
             "Train station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice",
             "Shopping mall: 10 coins - LANDMARK CARD\r\n\tYour Bakeries, Cafes, Convenience stores, and Family restaurants earn/steal an extra coin",
-            "Amusement park: 16 coins - LANDMARK CARD\r\n\tIf you roll doubles, take another turn"
+            "Amusement park: 16 coins - LANDMARK CARD\r\n\tIf you roll doubles, take another turn",
+            "Radio tower: 22 coins - LANDMARK CARD\r\n\tOnce per turn, you can choose to reroll your dice"
         };
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
@@ -404,7 +406,7 @@ namespace MachiKoro_ML
                     isTradable = false;
                     effect = null;
                     //Change owner's values to represent abilities of new card
-                    owner.AddRollTwo();
+                    owner.AddTrain();
                     break;
                 case Establishments.shopping_mall:
                     activationNums = null;
@@ -421,6 +423,14 @@ namespace MachiKoro_ML
                     effect = null;
                     //Change owner values
                     owner.AddPark();
+                    break;
+                case Establishments.radio_tower:
+                    activationNums = null;
+                    cost = 22;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner values
+                    owner.AddRadio();
                     break;
             }
         }
@@ -456,7 +466,13 @@ namespace MachiKoro_ML
             if(coins < 10) { return str; }
             //Ten costs
             str += $"{GetEstDesc(Establishments.shopping_mall)}\r\n";
-            return str; 
+            if(coins < 16) { return str; }
+            //Sixteen costs
+            str += $"{GetEstDesc(Establishments.amusement_park)}\r\n";
+            if(coins < 22) { return str; }
+            //Twenty-two costs
+            str += $"{GetEstDesc(Establishments.radio_tower)}\r\n";
+            return str;
         }
         static string GetEstDesc(Establishments est)
         {

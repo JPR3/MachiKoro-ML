@@ -25,6 +25,12 @@ namespace MachiKoro_ML
         }
         public void IncrementTurn()
         {
+            //Reset values for current player
+            if(currentPlayer.hasRadio)
+            {
+                currentPlayer.canReroll = true;
+            }
+            //Change the current player
             currentIndex++;
             if(currentIndex == players.Length) { currentIndex = 0; }
             currentPlayer = players[currentIndex];
@@ -32,6 +38,35 @@ namespace MachiKoro_ML
         }
         public void EvaluateRoll(int roll, bool doubles)
         {
+            if (currentPlayer.hasRadio && currentPlayer.canReroll)
+            {
+                Console.WriteLine("Would you like to reroll your dice? (Y/N)");
+                while (true)
+                {
+                    string str = Console.ReadLine();
+                    if (str.ToLower().Equals("y"))
+                    {
+                        currentPlayer.canReroll = false;
+                        RollData data = currentPlayer.Roll();
+                        int rollNum = data.rollVal;
+                        Console.WriteLine($"Rolled a {rollNum}");
+                        if (data.doubles)
+                        {
+                            Console.WriteLine("Doubles!");
+                        }
+                        EvaluateRoll(rollNum, data.doubles);
+                        return;
+                    }
+                    else if (str.ToLower().Equals("n"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter 'y' or 'n'");
+                    }
+                }
+            }
             foreach (Card c in allCards)
             {
                 if(c.activationNums == null) { continue; }
@@ -59,6 +94,7 @@ namespace MachiKoro_ML
                 }
                 return;
             }
+            
             //Buy phase
             Console.WriteLine("\r\nBuy a card, or pass\r\n");
             Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer.numCoins)}");

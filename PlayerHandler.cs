@@ -13,9 +13,11 @@ namespace MachiKoro_ML
         public int numCoins { get; private set; }
         Random random = new Random();
         List<Card> cards = new List<Card>();
-        bool canRollTwo = false;
+        public bool hasTrain { get; private set; } = false;
         public bool hasMall { get; private set; } = false;
         public bool hasPark { get; private set; } = false;
+        public bool hasRadio { get; private set; } = false;
+        public bool canReroll = false;
         Game game;
         public int numRanches = 0;
         public int numNature = 0;
@@ -29,9 +31,9 @@ namespace MachiKoro_ML
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
         }
-        public void AddRollTwo()
+        public void AddTrain()
         {
-            canRollTwo = true;
+            hasTrain = true;
         }
         public void AddMall()
         {
@@ -40,6 +42,11 @@ namespace MachiKoro_ML
         public void AddPark()
         {
             hasPark = true;
+        }
+        public void AddRadio()
+        {
+            hasRadio = true;
+            canReroll = true;
         }
         public int GetMaxSteal(int targetMax)
         {
@@ -78,7 +85,7 @@ namespace MachiKoro_ML
             int firstRoll;
             int secondRoll = 0;
             firstRoll = random.Next(1, 7);
-            if(canRollTwo)
+            if(hasTrain)
             {
                 Console.WriteLine("Roll two dice? (Y/N)");
                 while(true)
