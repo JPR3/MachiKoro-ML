@@ -12,7 +12,7 @@ namespace MachiKoro_ML
             prog.ReadCommands();
         }
     }
-    class Program //Rename at some point
+    public class Program //Rename at some point
     {
         Game game;
         Command HELP;
@@ -22,6 +22,8 @@ namespace MachiKoro_ML
         Command<int> FORCEROLL;
         Command BALANCE;
         Command<string> FORCEBUY;
+        Command EXIT;
+        Command RULES;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -44,7 +46,7 @@ namespace MachiKoro_ML
                     return; 
                 }
                 Console.WriteLine("Starting a game!");
-                game = new Game(x);
+                game = new Game(x, this);
                 commandList = playingCommands;
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
@@ -53,14 +55,26 @@ namespace MachiKoro_ML
             });
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
-                int rollNum = game.currentPlayer.Roll();
-                Console.WriteLine($"Rolled a {rollNum}");
-                game.EvaluateRoll(rollNum);
+                RollData data = game.currentPlayer.Roll();
+                int rollNum = data.rollVal1 + data.rollVal2;
+                if(data.rollVal2 != 0)
+                {
+                    Console.WriteLine($"Rolled a {rollNum} ({data.rollVal1} + {data.rollVal2})");
+                }
+                else
+                {
+                    Console.WriteLine($"Rolled a {rollNum}");
+                }
+                if (data.doubles)
+                {
+                    Console.WriteLine("Doubles!");
+                }
+                game.EvaluateRoll(rollNum, data.doubles);
             });
             FORCEROLL = new Command<int>("froll", "rolls with a predetermined number", "froll <number>", (x) =>
             {
                 Console.WriteLine($"Forced a {x}");
-                game.EvaluateRoll(x);
+                game.EvaluateRoll(x, false);
             });
             BALANCE = new Command("balance", "shows the coin balance of each player", "balance", () =>
             {
@@ -79,7 +93,17 @@ namespace MachiKoro_ML
                     Console.WriteLine("Please enter a valid card name");
                 }
             });
-
+            EXIT = new Command("exit", "stops the current game", "exit", () =>
+            {
+                EndGame(null);
+            });
+            RULES = new Command("rules", "prints the rules of the game", "rules", () =>
+            {
+                Console.WriteLine("Machi Koro is a game played with 2 to 4 players, where players take turns rolling dice and collecting income\r\n" +
+                    "with the goal of buying all four landmark cards to win. Players earn money through the establishments (cards) they own,\r\n" +
+                    "as each card has an effect related to earning money that will activate when it's corresponding number is rolled.\r\n" +
+                    "A turn consists of rolling, earning income, and buying up to one establishment.");
+            });
             playingCommands = new List<object>
             {
                 HELP,
@@ -87,12 +111,14 @@ namespace MachiKoro_ML
                 ROLL,
                 FORCEROLL,
                 FORCEBUY,
-                BALANCE
+                BALANCE,
+                EXIT
             };
             outCommands = new List<object>
             {
                 HELP,
-                PLAY
+                PLAY,
+                RULES
 
             };
             commandList = outCommands;
@@ -129,7 +155,17 @@ namespace MachiKoro_ML
                 }
             }
         }
-
+        public void EndGame(PlayerHandler winner)
+        {
+            Console.Clear();
+            if(winner != null)
+            {
+                Console.WriteLine($"{winner} has collected all four landmark cards, they win!");
+            }
+            Console.WriteLine("Game ended");
+            
+            commandList = outCommands;
+        }
     }
     
 }

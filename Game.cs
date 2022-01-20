@@ -12,8 +12,8 @@ namespace MachiKoro_ML
         public PlayerHandler currentPlayer { get; private set; }
         int currentIndex;
         public List<Card> allCards = new List<Card>();
-
-        public Game(int numPlayers)
+        private readonly Program prog;
+        public Game(int numPlayers, Program program)
         {
             currentIndex = 0;
             players = new PlayerHandler[numPlayers];
@@ -22,18 +22,68 @@ namespace MachiKoro_ML
                 players[i] = new PlayerHandler(this, "Player " + (i + 1));
             }
             currentPlayer = players[0];
+            prog = program;
         }
         public void IncrementTurn()
         {
+            //Reset values for current player
+            if(currentPlayer.hasRadio)
+            {
+                currentPlayer.canReroll = true;
+            }
+            //Check for a win
+            if(currentPlayer.hasMall && currentPlayer.hasPark && currentPlayer.hasRadio && currentPlayer.hasTrain)
+            {
+                prog.EndGame(currentPlayer);
+                return;
+            }
+            //Change the current player
             currentIndex++;
             if(currentIndex == players.Length) { currentIndex = 0; }
             currentPlayer = players[currentIndex];
             Console.WriteLine($"{currentPlayer}'s turn!");
         }
-        public void EvaluateRoll(int roll)
+        public void EvaluateRoll(int roll, bool doubles)
         {
+            if (currentPlayer.hasRadio && currentPlayer.canReroll)
+            {
+                Console.WriteLine("Would you like to reroll your dice? (Y/N)");
+                while (true)
+                {
+                    string str = Console.ReadLine();
+                    if (str.ToLower().Equals("y"))
+                    {
+                        currentPlayer.canReroll = false;
+                        RollData data = currentPlayer.Roll();
+                        int rollNum = data.rollVal1 + data.rollVal2;
+                        if (data.rollVal2 != 0)
+                        {
+                            Console.WriteLine($"Rolled a {rollNum} ({data.rollVal1} + {data.rollVal2})");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Rolled a {rollNum}");
+                        }
+                        if (data.doubles)
+                        {
+                            Console.WriteLine("Doubles!");
+                        }
+                        EvaluateRoll(rollNum, data.doubles);
+                        return;
+                    }
+                    else if (str.ToLower().Equals("n"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter 'y' or 'n'");
+                    }
+                }
+            }
             foreach (Card c in allCards)
             {
+                if(c.activationNums == null) { continue; }
                 for (int i = 0; i < c.activationNums.Length; i++)
                 {
                     if (c.activationNums[i] == roll)
@@ -48,9 +98,17 @@ namespace MachiKoro_ML
             if (currentPlayer.numCoins == 0)
             {
                 Console.WriteLine($"\r\n{currentPlayer} does not have enough money to buy anything");
-                IncrementTurn();
+                if(!doubles)
+                {
+                    IncrementTurn();
+                }
+                else
+                {
+                    Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                }
                 return;
             }
+            
             //Buy phase
             Console.WriteLine("\r\nBuy a card, or pass\r\n");
             Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer.numCoins)}");
@@ -60,7 +118,14 @@ namespace MachiKoro_ML
                 string[] args = str.Split(' ');
                 if (args[0].ToLower().Equals("pass"))
                 {
-                    IncrementTurn();
+                    if (!doubles)
+                    {
+                        IncrementTurn();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    }
                     return;
                 }
                 else if (args[0].ToLower().Equals("buy"))
@@ -73,7 +138,14 @@ namespace MachiKoro_ML
                             currentPlayer.AddCard(newCard);
                             currentPlayer.ChangeCoins(-newCard.cost);
                             Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
-                            IncrementTurn();
+                            if (!doubles)
+                            {
+                                IncrementTurn();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                            }
                             return;
                         }
                         else

@@ -13,7 +13,11 @@ namespace MachiKoro_ML
         public int numCoins { get; private set; }
         Random random = new Random();
         List<Card> cards = new List<Card>();
-        bool rollTwo = false;
+        public bool hasTrain { get; private set; } = false;
+        public bool hasMall { get; private set; } = false;
+        public bool hasPark { get; private set; } = false;
+        public bool hasRadio { get; private set; } = false;
+        public bool canReroll = false;
         Game game;
         public int numRanches = 0;
         public int numNature = 0;
@@ -27,7 +31,29 @@ namespace MachiKoro_ML
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
         }
-
+        public void AddTrain()
+        {
+            hasTrain = true;
+        }
+        public void AddMall()
+        {
+            hasMall = true;
+        }
+        public void AddPark()
+        {
+            hasPark = true;
+        }
+        public void AddRadio()
+        {
+            hasRadio = true;
+            canReroll = true;
+        }
+        public int GetMaxSteal(int targetMax)
+        {
+            int toSteal = numCoins;
+            if(toSteal > targetMax) { toSteal = targetMax; }
+            return toSteal;
+        }
         public bool ChangeCoins(int c)
         {
             if(c < 0 && numCoins + c < 0) { return false; }
@@ -54,15 +80,33 @@ namespace MachiKoro_ML
             }
         }
 
-        public int Roll()
+        public RollData Roll()
         {
-            int sum = 0;
-            if(rollTwo)
+            int firstRoll;
+            int secondRoll = 0;
+            firstRoll = random.Next(1, 7);
+            if(hasTrain)
             {
-                sum += random.Next(1, 7);
+                Console.WriteLine("Roll two dice? (Y/N)");
+                while(true)
+                {
+                    string str = Console.ReadLine();
+                    if (str.ToLower().Equals("y"))
+                    {
+                        secondRoll = random.Next(1, 7);
+                        break;
+                    }
+                    else if(str.ToLower().Equals("n"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Enter 'y' or 'n'");
+                    }
+                }
             }
-            sum += random.Next(1, 7);
-            return sum;
+            return new RollData(firstRoll, secondRoll, (firstRoll == secondRoll) && hasPark);
         }
 
         override public string ToString()
@@ -82,6 +126,19 @@ namespace MachiKoro_ML
         public Card[] GetCardsAsArray()
         {
             return cards.ToArray();
+        }
+    }
+    public class RollData
+    {
+        public readonly int rollVal1;
+        public readonly int rollVal2;
+        public readonly bool doubles;
+
+        public RollData(int val1, int val2, bool db)
+        {
+            rollVal1 = val1;
+            rollVal2 = val2;
+            doubles = db;
         }
     }
 }

@@ -24,7 +24,11 @@ namespace MachiKoro_ML
             mine,
             family_restaurant,
             apple_orchard,
-            fruit_and_vegetable_market
+            fruit_and_vegetable_market,
+            train_station,
+            shopping_mall,
+            amusement_park,
+            radio_tower
         };
 
 
@@ -47,7 +51,11 @@ namespace MachiKoro_ML
             "Mine: 6 coins - activates on 9\r\n\tGet 5 coins from the bank, on anyone's turn",
             "Family resturant: 3 coins - activates on 9-10\r\n\tGet 2 coins from the player who rolled the dice",
             "Apple orchard: 3 coins - activates on 10\r\n\tGet 3 coins from the bank, on anyone's turn",
-            "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only"
+            "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only",
+            "Train station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice",
+            "Shopping mall: 10 coins - LANDMARK CARD\r\n\tYour Bakeries, Cafes, Convenience stores, and Family restaurants earn/steal an extra coin",
+            "Amusement park: 16 coins - LANDMARK CARD\r\n\tIf you roll doubles, take another turn",
+            "Radio tower: 22 coins - LANDMARK CARD\r\n\tOnce per turn, you can choose to reroll your dice"
         };
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
@@ -106,7 +114,9 @@ namespace MachiKoro_ML
                         if(caller == owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            owner.ChangeCoins(1);
+                            int change = 1;
+                            if (owner.hasMall) { change = 2; }
+                            owner.ChangeCoins(change);
                         }
                     };
                     break;
@@ -119,9 +129,14 @@ namespace MachiKoro_ML
                         if(caller != owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            if(caller.ChangeCoins(-1))
+                            int targetSteal = 1; //Set to 2 if has mall
+                            if(owner.hasMall) { targetSteal = 2; }
+                            int stealNum = caller.GetMaxSteal(targetSteal);
+                            if(stealNum != 0)
                             {
-                                owner.ChangeCoins(1);
+                                caller.ChangeCoins(-stealNum);
+                                owner.ChangeCoins(stealNum);
+                                Console.WriteLine($"Stole {stealNum} from {caller}");
                             }
                             else
                             {
@@ -139,7 +154,9 @@ namespace MachiKoro_ML
                         if(caller == owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            owner.ChangeCoins(3);
+                            int change = 3;
+                            if (owner.hasMall) { change = 4; }
+                            owner.ChangeCoins(change);
                         }
                     };
                     break;
@@ -165,17 +182,17 @@ namespace MachiKoro_ML
                             Console.WriteLine($"{owner}'s {this} activated!");
                             foreach (PlayerHandler player in game.players)
                             {
-                                if(player.ChangeCoins(-2))
+                                if(player == owner) { continue; }
+                                int stealNum = player.GetMaxSteal(2);
+                                if (stealNum != 0)
                                 {
-                                    owner.ChangeCoins(2);
-                                }
-                                else if(player.ChangeCoins(-2))
-                                {
-                                    owner.ChangeCoins(1);
+                                    player.ChangeCoins(-stealNum);
+                                    owner.ChangeCoins(stealNum);
+                                    Console.WriteLine($"Stole {stealNum} from {player}");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"...but couldn't steal from {player}");
+                                    Console.WriteLine("...but there was nothing to steal!");
                                 }
                             }
                         }
@@ -206,11 +223,10 @@ namespace MachiKoro_ML
                                 }
                             }
                             //Steal up to 5 coins from target
-                            int maxCoins = target.numCoins;
-                            if(maxCoins > 5) { maxCoins = 5; }
-                            target.ChangeCoins(-maxCoins);
-                            owner.ChangeCoins(maxCoins);
-                            Console.WriteLine($"Stole {maxCoins} from {target}");
+                            int stealNum = target.GetMaxSteal(5);
+                            target.ChangeCoins(-stealNum);
+                            owner.ChangeCoins(stealNum);
+                            Console.WriteLine($"\r\nStole {stealNum} from {target}");
 
 
                         }
@@ -345,13 +361,14 @@ namespace MachiKoro_ML
                         if (caller != owner)
                         {
                             Console.WriteLine($"{owner}'s {this} activated!");
-                            if (caller.ChangeCoins(-2))
+                            int targetSteal = 2; //Set to 3 if has mall
+                            if (owner.hasMall) { targetSteal = 3; }
+                            int stealNum = caller.GetMaxSteal(targetSteal);
+                            if (stealNum != 0)
                             {
-                                owner.ChangeCoins(2);
-                            }
-                            else if(caller.ChangeCoins(-1))
-                            {
-                                owner.ChangeCoins(1);
+                                caller.ChangeCoins(-stealNum);
+                                owner.ChangeCoins(stealNum);
+                                Console.WriteLine($"Stole {stealNum} from {caller}");
                             }
                             else
                             {
@@ -383,6 +400,38 @@ namespace MachiKoro_ML
                         }
                     };
                     break;
+                case Establishments.train_station:
+                    activationNums = null;
+                    cost = 4;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner's values to represent abilities of new card
+                    owner.AddTrain();
+                    break;
+                case Establishments.shopping_mall:
+                    activationNums = null;
+                    cost = 10;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner values
+                    owner.AddMall();
+                    break;
+                case Establishments.amusement_park:
+                    activationNums = null;
+                    cost = 16;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner values
+                    owner.AddPark();
+                    break;
+                case Establishments.radio_tower:
+                    activationNums = null;
+                    cost = 22;
+                    isTradable = false;
+                    effect = null;
+                    //Change owner values
+                    owner.AddRadio();
+                    break;
             }
         }
 
@@ -399,6 +448,9 @@ namespace MachiKoro_ML
             str += $"{GetEstDesc(Establishments.cafe)}\r\n{GetEstDesc(Establishments.convenience_store)}\r\n{GetEstDesc(Establishments.forest)}" +
                 $"\r\n{GetEstDesc(Establishments.furniture_factory)}\r\n{GetEstDesc(Establishments.family_restaurant)}\r\n" +
                 $"{GetEstDesc(Establishments.apple_orchard)}\r\n";
+            if(coins < 4) { return str; }
+            //Four costs
+            str += $"{GetEstDesc(Establishments.train_station)}\r\n";
             if(coins < 5) { return str; }
             //Five costs
             str += $"{GetEstDesc(Establishments.cheese_factory)}\r\n";
@@ -411,7 +463,16 @@ namespace MachiKoro_ML
             if(coins < 8) { return str; }
             //Eight costs
             str += $"{GetEstDesc(Establishments.business_center)}\r\n";
-            return str; 
+            if(coins < 10) { return str; }
+            //Ten costs
+            str += $"{GetEstDesc(Establishments.shopping_mall)}\r\n";
+            if(coins < 16) { return str; }
+            //Sixteen costs
+            str += $"{GetEstDesc(Establishments.amusement_park)}\r\n";
+            if(coins < 22) { return str; }
+            //Twenty-two costs
+            str += $"{GetEstDesc(Establishments.radio_tower)}\r\n";
+            return str;
         }
         static string GetEstDesc(Establishments est)
         {
