@@ -12,8 +12,8 @@ namespace MachiKoro_ML
         public PlayerHandler currentPlayer { get; private set; }
         int currentIndex;
         public List<Card> allCards = new List<Card>();
-
-        public Game(int numPlayers)
+        private readonly Program prog;
+        public Game(int numPlayers, Program program)
         {
             currentIndex = 0;
             players = new PlayerHandler[numPlayers];
@@ -22,6 +22,7 @@ namespace MachiKoro_ML
                 players[i] = new PlayerHandler(this, "Player " + (i + 1));
             }
             currentPlayer = players[0];
+            prog = program;
         }
         public void IncrementTurn()
         {
@@ -29,6 +30,12 @@ namespace MachiKoro_ML
             if(currentPlayer.hasRadio)
             {
                 currentPlayer.canReroll = true;
+            }
+            //Check for a win
+            if(currentPlayer.hasMall && currentPlayer.hasPark && currentPlayer.hasRadio && currentPlayer.hasTrain)
+            {
+                prog.EndGame(currentPlayer);
+                return;
             }
             //Change the current player
             currentIndex++;

@@ -12,7 +12,7 @@ namespace MachiKoro_ML
             prog.ReadCommands();
         }
     }
-    class Program //Rename at some point
+    public class Program //Rename at some point
     {
         Game game;
         Command HELP;
@@ -46,7 +46,7 @@ namespace MachiKoro_ML
                     return; 
                 }
                 Console.WriteLine("Starting a game!");
-                game = new Game(x);
+                game = new Game(x, this);
                 commandList = playingCommands;
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
@@ -95,9 +95,7 @@ namespace MachiKoro_ML
             });
             EXIT = new Command("exit", "stops the current game", "exit", () =>
             {
-                Console.Clear();
-                Console.WriteLine("Game ended");
-                commandList = outCommands;
+                EndGame(null);
             });
             RULES = new Command("rules", "prints the rules of the game", "rules", () =>
             {
@@ -157,7 +155,17 @@ namespace MachiKoro_ML
                 }
             }
         }
-
+        public void EndGame(PlayerHandler winner)
+        {
+            Console.Clear();
+            if(winner != null)
+            {
+                Console.WriteLine($"{winner} has collected all four landmark cards, they win!");
+            }
+            Console.WriteLine("Game ended");
+            
+            commandList = outCommands;
+        }
     }
     
 }
