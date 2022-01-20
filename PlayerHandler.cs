@@ -80,31 +80,14 @@ namespace MachiKoro_ML
             }
         }
 
-        public RollData Roll()
+        public RollData Roll(bool rollTwo)
         {
             int firstRoll;
             int secondRoll = 0;
             firstRoll = random.Next(1, 7);
-            if(hasTrain)
+            if(rollTwo)
             {
-                Console.WriteLine("Roll two dice? (Y/N)");
-                while(true)
-                {
-                    string str = Console.ReadLine();
-                    if (str.ToLower().Equals("y"))
-                    {
-                        secondRoll = random.Next(1, 7);
-                        break;
-                    }
-                    else if(str.ToLower().Equals("n"))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Enter 'y' or 'n'");
-                    }
-                }
+                secondRoll = random.Next(1, 7);
             }
             return new RollData(firstRoll, secondRoll, (firstRoll == secondRoll) && hasPark);
         }

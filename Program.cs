@@ -20,6 +20,7 @@ namespace MachiKoro_ML
         Command PLAYER;
         Command ROLL;
         Command<int> FORCEROLL;
+        Command ROLLONE;
         Command BALANCE;
         Command<string> FORCEBUY;
         Command EXIT;
@@ -55,7 +56,7 @@ namespace MachiKoro_ML
             });
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
-                RollData data = game.currentPlayer.Roll();
+                RollData data = game.currentPlayer.Roll(game.currentPlayer.hasTrain);
                 int rollNum = data.rollVal1 + data.rollVal2;
                 if(data.rollVal2 != 0)
                 {
@@ -75,6 +76,13 @@ namespace MachiKoro_ML
             {
                 Console.WriteLine($"Forced a {x}");
                 game.EvaluateRoll(x, false);
+            });
+            ROLLONE = new Command("rollone", "rolls only one die", "rollone", () =>
+            {
+                RollData data = game.currentPlayer.Roll(false);
+                int rollNum = data.rollVal1;
+                Console.WriteLine($"Rolled a {rollNum}");
+                game.EvaluateRoll(rollNum, false);
             });
             BALANCE = new Command("balance", "shows the coin balance of each player", "balance", () =>
             {
@@ -110,6 +118,7 @@ namespace MachiKoro_ML
                 PLAYER,
                 ROLL,
                 FORCEROLL,
+                ROLLONE,
                 FORCEBUY,
                 BALANCE,
                 EXIT

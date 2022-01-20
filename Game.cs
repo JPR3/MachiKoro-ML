@@ -54,7 +54,34 @@ namespace MachiKoro_ML
                     if (str.ToLower().Equals("y"))
                     {
                         currentPlayer.canReroll = false;
-                        RollData data = currentPlayer.Roll();
+                        RollData data;
+                        if (currentPlayer.hasTrain)
+                        {
+                            //Determine how many dice to roll
+                            Console.WriteLine("Roll two dice? (Y/N)");
+                            while (true)
+                            {
+                                string str2 = Console.ReadLine();
+                                if (str2.ToLower().Equals("y"))
+                                {
+                                    data = currentPlayer.Roll(true);
+                                    break;
+                                }
+                                else if (str2.ToLower().Equals("n"))
+                                {
+                                    data = currentPlayer.Roll(false);
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Enter 'y' or 'n'");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            data = currentPlayer.Roll(false);
+                        }
                         int rollNum = data.rollVal1 + data.rollVal2;
                         if (data.rollVal2 != 0)
                         {
