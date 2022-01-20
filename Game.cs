@@ -48,8 +48,15 @@ namespace MachiKoro_ML
                     {
                         currentPlayer.canReroll = false;
                         RollData data = currentPlayer.Roll();
-                        int rollNum = data.rollVal;
-                        Console.WriteLine($"Rolled a {rollNum}");
+                        int rollNum = data.rollVal1 + data.rollVal2;
+                        if (data.rollVal2 != 0)
+                        {
+                            Console.WriteLine($"Rolled a {rollNum} ({data.rollVal1} + {data.rollVal2})");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Rolled a {rollNum}");
+                        }
                         if (data.doubles)
                         {
                             Console.WriteLine("Doubles!");

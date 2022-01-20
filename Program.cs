@@ -56,9 +56,16 @@ namespace MachiKoro_ML
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
                 RollData data = game.currentPlayer.Roll();
-                int rollNum = data.rollVal;
-                Console.WriteLine($"Rolled a {rollNum}");
-                if(data.doubles)
+                int rollNum = data.rollVal1 + data.rollVal2;
+                if(data.rollVal2 != 0)
+                {
+                    Console.WriteLine($"Rolled a {rollNum} ({data.rollVal1} + {data.rollVal2})");
+                }
+                else
+                {
+                    Console.WriteLine($"Rolled a {rollNum}");
+                }
+                if (data.doubles)
                 {
                     Console.WriteLine("Doubles!");
                 }

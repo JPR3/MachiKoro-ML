@@ -106,7 +106,7 @@ namespace MachiKoro_ML
                     }
                 }
             }
-            return new RollData(firstRoll + secondRoll, (firstRoll == secondRoll) && hasPark);
+            return new RollData(firstRoll, secondRoll, (firstRoll == secondRoll) && hasPark);
         }
 
         override public string ToString()
@@ -130,12 +130,14 @@ namespace MachiKoro_ML
     }
     public class RollData
     {
-        public int rollVal;
-        public bool doubles;
+        public readonly int rollVal1;
+        public readonly int rollVal2;
+        public readonly bool doubles;
 
-        public RollData(int val, bool db)
+        public RollData(int val1, int val2, bool db)
         {
-            rollVal = val;
+            rollVal1 = val1;
+            rollVal2 = val2;
             doubles = db;
         }
     }
