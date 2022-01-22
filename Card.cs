@@ -37,25 +37,25 @@ namespace MachiKoro_ML
         PlayerHandler owner;
         static readonly string[] descriptions =
         {
-            "Wheat field: 1 coin - activates on 1\r\n\tGet 1 coin from the bank, on anyone's turn",
+            "Wheat_field: 1 coin - activates on 1\r\n\tGet 1 coin from the bank, on anyone's turn",
             "Ranch: 1 coin - activates on 2\r\n\tGet 1 coin from the bank, on anyone's turn",
             "Bakery: 1 coin - activates on 2-3\r\n\tGet 1 coin from the bank, on your turn only",
             "Cafe: 2 coins - activates on 3\r\n\tGet 1 coin from the player who rolled the dice",
-            "Convenience store: 2 coins - activates on 4\r\n\tGet 3 coins from the bank, on your turn only",
+            "Convenience_store: 2 coins - activates on 4\r\n\tGet 3 coins from the bank, on your turn only",
             "Forest: 3 coins - activates on 5\r\n\tGet 1 coin from the bank, on anyone's turn",
             "Stadium: 6 coins - activates on 6\r\n\tGet 2 coins from all players, on your turn only",
-            "TV station: 7 coins - activates on 6\r\n\tTake 5 coins from any one player, on your turn only",
-            "Business center: 8 coins - activates on 6\r\n\tTrade one establishment with another player, on your turn only",
-            "Cheese factory: 5 coins - activates on 7\r\n\tGet three coins from the bank for each ranch you own, on your turn only",
-            "Furniture factory: 3 coins - activates on 8\r\n\tGet 3 coins from the bank for each forest or mine you own, on your turn only",
+            "TV_station: 7 coins - activates on 6\r\n\tTake 5 coins from any one player, on your turn only",
+            "Business_center: 8 coins - activates on 6\r\n\tTrade one establishment with another player, on your turn only",
+            "Cheese_factory: 5 coins - activates on 7\r\n\tGet three coins from the bank for each ranch you own, on your turn only",
+            "Furniture_factory: 3 coins - activates on 8\r\n\tGet 3 coins from the bank for each forest or mine you own, on your turn only",
             "Mine: 6 coins - activates on 9\r\n\tGet 5 coins from the bank, on anyone's turn",
-            "Family resturant: 3 coins - activates on 9-10\r\n\tGet 2 coins from the player who rolled the dice",
-            "Apple orchard: 3 coins - activates on 10\r\n\tGet 3 coins from the bank, on anyone's turn",
-            "Fruit and vegetable market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only",
-            "Train station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice",
-            "Shopping mall: 10 coins - LANDMARK CARD\r\n\tYour Bakeries, Cafes, Convenience stores, and Family restaurants earn/steal an extra coin",
-            "Amusement park: 16 coins - LANDMARK CARD\r\n\tIf you roll doubles, take another turn",
-            "Radio tower: 22 coins - LANDMARK CARD\r\n\tOnce per turn, you can choose to reroll your dice"
+            "Family_resturant: 3 coins - activates on 9-10\r\n\tGet 2 coins from the player who rolled the dice",
+            "Apple_orchard: 3 coins - activates on 10\r\n\tGet 3 coins from the bank, on anyone's turn",
+            "Fruit_and_vegetable_market: 2 coins - activates on 11-12\r\n\tGet 2 coins from the bank for each wheat field or apple orchard you own, on your turn only",
+            "Train_station: 4 coins - LANDMARK CARD\r\n\tYou may roll 1 or 2 dice",
+            "Shopping_mall: 10 coins - LANDMARK CARD\r\n\tYour Bakeries, Cafes, Convenience stores, and Family restaurants earn/steal an extra coin",
+            "Amusement_park: 16 coins - LANDMARK CARD\r\n\tIf you roll doubles, take another turn",
+            "Radio_tower: 22 coins - LANDMARK CARD\r\n\tOnce per turn, you can choose to reroll your dice"
         };
         public int[] activationNums { get; private set; }
         public int cost { get; private set; }
