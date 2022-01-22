@@ -25,6 +25,7 @@ namespace MachiKoro_ML
         Command<string> FORCEBUY;
         Command EXIT;
         Command RULES;
+        Command<string> INFO;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -112,6 +113,18 @@ namespace MachiKoro_ML
                     "as each card has an effect related to earning money that will activate when it's corresponding number is rolled.\r\n" +
                     "A turn consists of rolling, earning income, and buying up to one establishment.");
             });
+            INFO = new Command<string>("info", "displays info about a card type", "info <type>", (x) =>
+            {
+                if(Enum.TryParse(x, out Card.Establishments est))
+                {
+                    Console.WriteLine(Card.GetEstDesc(est));
+                }
+                else
+                {
+                    Console.WriteLine($"{x} is not a valid card type");
+                }
+            });
+
             playingCommands = new List<object>
             {
                 HELP,
@@ -121,13 +134,15 @@ namespace MachiKoro_ML
                 ROLLONE,
                 FORCEBUY,
                 BALANCE,
-                EXIT
+                EXIT,
+                INFO
             };
             outCommands = new List<object>
             {
                 HELP,
                 PLAY,
-                RULES
+                RULES,
+                INFO
 
             };
             commandList = outCommands;

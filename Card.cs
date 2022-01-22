@@ -499,7 +499,7 @@ namespace MachiKoro_ML
             }
             return str;
         }
-        static string GetEstDesc(Establishments est)
+        public static string GetEstDesc(Establishments est)
         {
             return descriptions[(int)est];
         }
