@@ -137,13 +137,12 @@ namespace MachiKoro_ML
             }
             
             //Buy phase
-            Console.WriteLine("\r\nBuy a card, or pass\r\n");
+            Console.WriteLine("\r\nChoose a card to buy, or pass\r\n");
             Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer)}");
             while (true)
             {
                 string str = Console.ReadLine();
-                string[] args = str.Split(' ');
-                if (args[0].ToLower().Equals("pass"))
+                if (str.ToLower().Equals("pass"))
                 {
                     if (!doubles)
                     {
@@ -155,46 +154,38 @@ namespace MachiKoro_ML
                     }
                     return;
                 }
-                else if (args[0].ToLower().Equals("buy"))
+                else if (Enum.TryParse(str.ToLower(), out Card.Establishments est))
                 {
-                    if (Enum.TryParse(args[1].ToLower(), out Card.Establishments est))
+                    if(!CheckBuyValidity(est))
                     {
-                        if(!CheckBuyValidity(est))
+                        Console.WriteLine($"Cannot buy duplicates of {est} - you already have one");
+                        continue;
+                    }
+                    Card newCard = new Card(est, currentPlayer, this);
+                    if (newCard.cost <= currentPlayer.numCoins)
+                    {
+                        currentPlayer.AddCard(newCard);
+                        currentPlayer.ChangeCoins(-newCard.cost);
+                        Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                        if (!doubles)
                         {
-                            Console.WriteLine($"Cannot buy duplicates of {est} - you already have one");
-                            continue;
-                        }
-                        Card newCard = new Card(est, currentPlayer, this);
-                        if (newCard.cost <= currentPlayer.numCoins)
-                        {
-                            currentPlayer.AddCard(newCard);
-                            currentPlayer.ChangeCoins(-newCard.cost);
-                            Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
-                            if (!doubles)
-                            {
-                                IncrementTurn();
-                            }
-                            else
-                            {
-                                Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
-                            }
-                            return;
-                            
+                            IncrementTurn();
                         }
                         else
                         {
-                            Console.WriteLine($"Cannot afford {newCard} - you have {currentPlayer.numCoins} coins");
+                            Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
                         }
-
+                        return;
+                            
                     }
                     else
                     {
-                        Console.WriteLine("Please enter a valid card name");
+                        Console.WriteLine($"Cannot afford {newCard} - you have {currentPlayer.numCoins} coins");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Please enter 'buy' or 'pass'");
+                    Console.WriteLine("Please enter a valid card name, or 'pass'");
                 }
             }
         }
