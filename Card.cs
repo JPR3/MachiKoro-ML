@@ -175,6 +175,7 @@ namespace MachiKoro_ML
                     activationNums = new int[1] { 6 };
                     cost = 6;
                     isTradable = false;
+                    owner.AddStadium();
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -202,6 +203,7 @@ namespace MachiKoro_ML
                     activationNums = new int[1] { 6 };
                     cost = 7;
                     isTradable = false;
+                    owner.AddStation();
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -236,6 +238,7 @@ namespace MachiKoro_ML
                     activationNums = new int[1] { 6 };
                     cost = 8;
                     isTradable = false;
+                    owner.AddCenter();
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -435,8 +438,9 @@ namespace MachiKoro_ML
             }
         }
 
-        public static string GetPurchasableEstablishments(int coins)
+        public static string GetPurchasableEstablishments(PlayerHandler player)
         {
+            int coins = player.numCoins;
             string str = "";
             //One costs
             str += $"{GetEstDesc(Establishments.wheat_field)}\r\n{GetEstDesc(Establishments.ranch)}\r\n{GetEstDesc(Establishments.bakery)}\r\n";
@@ -450,28 +454,49 @@ namespace MachiKoro_ML
                 $"{GetEstDesc(Establishments.apple_orchard)}\r\n";
             if(coins < 4) { return str; }
             //Four costs
-            str += $"{GetEstDesc(Establishments.train_station)}\r\n";
+            if(!player.hasTrain)
+            {
+                str += $"{GetEstDesc(Establishments.train_station)}\r\n";
+            }
             if(coins < 5) { return str; }
             //Five costs
             str += $"{GetEstDesc(Establishments.cheese_factory)}\r\n";
             if(coins < 6) { return str; }
             //Six costs
-            str += $"{GetEstDesc(Establishments.stadium)}\r\n{GetEstDesc(Establishments.mine)}\r\n";
+            if(!player.hasStadium)
+            {
+                str += $"{GetEstDesc(Establishments.stadium)}\r\n{GetEstDesc(Establishments.mine)}\r\n";
+            }
             if(coins < 7) { return str; }
             //Seven costs
-            str += $"{GetEstDesc(Establishments.tv_station)}\r\n";
+            if(!player.hasStation)
+            {
+                str += $"{GetEstDesc(Establishments.tv_station)}\r\n";
+            }
             if(coins < 8) { return str; }
             //Eight costs
-            str += $"{GetEstDesc(Establishments.business_center)}\r\n";
+            if(!player.hasCenter)
+            {
+                str += $"{GetEstDesc(Establishments.business_center)}\r\n";
+            }
             if(coins < 10) { return str; }
             //Ten costs
-            str += $"{GetEstDesc(Establishments.shopping_mall)}\r\n";
+            if(!player.hasMall)
+            {
+                str += $"{GetEstDesc(Establishments.shopping_mall)}\r\n";
+            }
             if(coins < 16) { return str; }
             //Sixteen costs
-            str += $"{GetEstDesc(Establishments.amusement_park)}\r\n";
+            if (!player.hasPark)
+            {
+                str += $"{GetEstDesc(Establishments.amusement_park)}\r\n";
+            }
             if(coins < 22) { return str; }
             //Twenty-two costs
-            str += $"{GetEstDesc(Establishments.radio_tower)}\r\n";
+            if (!player.hasRadio)
+            {
+                str += $"{GetEstDesc(Establishments.radio_tower)}\r\n";
+            }
             return str;
         }
         static string GetEstDesc(Establishments est)

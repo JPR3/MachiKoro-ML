@@ -108,6 +108,7 @@ namespace MachiKoro_ML
                     }
                 }
             }
+            //Activate cards
             foreach (Card c in allCards)
             {
                 if(c.activationNums == null) { continue; }
@@ -115,7 +116,6 @@ namespace MachiKoro_ML
                 {
                     if (c.activationNums[i] == roll)
                     {
-
                         c.Invoke(currentPlayer);
                     }
                 }
@@ -138,7 +138,7 @@ namespace MachiKoro_ML
             
             //Buy phase
             Console.WriteLine("\r\nBuy a card, or pass\r\n");
-            Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer.numCoins)}");
+            Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer)}");
             while (true)
             {
                 string str = Console.ReadLine();
@@ -159,6 +159,11 @@ namespace MachiKoro_ML
                 {
                     if (Enum.TryParse(args[1].ToLower(), out Card.Establishments est))
                     {
+                        if(!CheckBuyValidity(est))
+                        {
+                            Console.WriteLine($"Cannot buy duplicates of {est} - you already have one");
+                            continue;
+                        }
                         Card newCard = new Card(est, currentPlayer, this);
                         if (newCard.cost <= currentPlayer.numCoins)
                         {
@@ -174,6 +179,7 @@ namespace MachiKoro_ML
                                 Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
                             }
                             return;
+                            
                         }
                         else
                         {
@@ -199,6 +205,34 @@ namespace MachiKoro_ML
             {
                 Console.WriteLine($"{p}: {p.numCoins}");
             }
+        }
+        bool CheckBuyValidity(Card.Establishments est)
+        {
+            switch(est)
+            {
+                case Card.Establishments.stadium:
+                    if (currentPlayer.hasStadium) { return false; }
+                    break;
+                case Card.Establishments.tv_station:
+                    if (currentPlayer.hasStation) { return false; }
+                    break;
+                case Card.Establishments.business_center:
+                    if (currentPlayer.hasCenter) { return false; }
+                    break;
+                case Card.Establishments.train_station:
+                    if (currentPlayer.hasTrain) { return false; }
+                    break;
+                case Card.Establishments.shopping_mall:
+                    if (currentPlayer.hasMall) { return false; }
+                    break;
+                case Card.Establishments.amusement_park:
+                    if (currentPlayer.hasPark) { return false; }
+                    break;
+                case Card.Establishments.radio_tower:
+                    if (currentPlayer.hasRadio) { return false; }
+                    break;
+            }
+            return true;
         }
     }
 }

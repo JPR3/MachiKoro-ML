@@ -17,6 +17,9 @@ namespace MachiKoro_ML
         public bool hasMall { get; private set; } = false;
         public bool hasPark { get; private set; } = false;
         public bool hasRadio { get; private set; } = false;
+        public bool hasStadium { get; private set; } = false;
+        public bool hasStation { get; private set; } = false;
+        public bool hasCenter { get; private set; } = false;
         public bool canReroll = false;
         Game game;
         public int numRanches = 0;
@@ -47,6 +50,18 @@ namespace MachiKoro_ML
         {
             hasRadio = true;
             canReroll = true;
+        }
+        public void AddStadium()
+        {
+            hasStadium = true;
+        }
+        public void AddStation()
+        {
+            hasStation = true;
+        }
+        public void AddCenter()
+        {
+            hasCenter = true;
         }
         public int GetMaxSteal(int targetMax)
         {
