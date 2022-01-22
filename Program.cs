@@ -26,6 +26,7 @@ namespace MachiKoro_ML
         Command EXIT;
         Command RULES;
         Command<string> INFO;
+        Command CLOSE;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -124,9 +125,13 @@ namespace MachiKoro_ML
                     Console.WriteLine($"{x} is not a valid card type");
                 }
             });
-
+            CLOSE = new Command("close", "closes the application", "close", () =>
+            {
+                Environment.Exit(0);
+            });
             playingCommands = new List<object>
             {
+                CLOSE,
                 HELP,
                 PLAYER,
                 ROLL,
@@ -139,6 +144,7 @@ namespace MachiKoro_ML
             };
             outCommands = new List<object>
             {
+                CLOSE,
                 HELP,
                 PLAY,
                 RULES,
