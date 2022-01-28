@@ -27,6 +27,7 @@ namespace MachiKoro_ML
         Command RULES;
         Command<string> INFO;
         Command CLOSE;
+        Command DUMMYGAME;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -50,6 +51,12 @@ namespace MachiKoro_ML
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(x, this);
+                commandList = playingCommands;
+            });
+            DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
+            {
+                Console.WriteLine("Starting a game!");
+                game = new Game(1, 2, this, true);
                 commandList = playingCommands;
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
@@ -147,6 +154,7 @@ namespace MachiKoro_ML
                 CLOSE,
                 HELP,
                 PLAY,
+                DUMMYGAME,
                 RULES,
                 INFO
 

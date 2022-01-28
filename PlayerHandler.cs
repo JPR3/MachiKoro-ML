@@ -9,7 +9,7 @@ namespace MachiKoro_ML
 {
     public class PlayerHandler
     {
-        string name;
+        public readonly string name;
         public int numCoins { get; private set; }
         Random random = new Random();
         List<Card> cards = new List<Card>();
@@ -21,15 +21,26 @@ namespace MachiKoro_ML
         public bool hasStation { get; private set; } = false;
         public bool hasCenter { get; private set; } = false;
         public bool canReroll = false;
-        Game game;
+        public readonly Game game;
         public int numRanches = 0;
         public int numNature = 0;
         public int numAgriculture = 0;
+        public readonly DumbComputer parentComputer;
 
         public PlayerHandler(Game game, string nm)
         {
             name = nm;
             this.game = game;
+            numCoins = 3;
+            AddCard(new Card(Card.Establishments.wheat_field, this, game));
+            AddCard(new Card(Card.Establishments.bakery, this, game));
+        }
+        public PlayerHandler(Game game, string nm, DumbComputer cpu)
+        {
+            name = nm;
+            this.game = game;
+            parentComputer = cpu;
+            parentComputer.SetHandler(this);
             numCoins = 3;
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));

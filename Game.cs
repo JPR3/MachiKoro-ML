@@ -24,6 +24,44 @@ namespace MachiKoro_ML
             currentPlayer = players[0];
             prog = program;
         }
+        public Game(int numHumans, int numComputers, Program program, bool dummy)
+        {
+            currentIndex = 0;
+            players = new PlayerHandler[numHumans + numComputers];
+            int playersIndex = numHumans;
+            for (int i = 0; i < numHumans; i++)
+            {
+                players[i] = new PlayerHandler(this, "Player " + (i + 1));
+            }
+            for(int j = 0; j < numComputers; j++)
+            {
+                PlayerHandler newPlayer;
+                if (dummy)
+                {
+                    if(j == 0)
+                    {
+                        newPlayer = new PlayerHandler(this, "Wheatly", new DumbComputer(Card.Establishments.wheat_field));
+                    }
+                    else
+                    {
+                        newPlayer = new PlayerHandler(this, "Gump", new DumbComputer(Card.Establishments.forest));
+                    }
+                }
+                else
+                {
+                    newPlayer = new PlayerHandler(this, "Computer " + (j + 1), new DumbComputer(Card.Establishments.wheat_field));
+                }
+                
+                players[playersIndex] = newPlayer;
+                playersIndex++;
+            }
+            currentPlayer = players[0];
+            prog = program;
+            if(numHumans == 0)
+            {
+                currentPlayer.parentComputer.TakeTurn();
+            }
+        }
         public void IncrementTurn()
         {
             //Reset values for current player
@@ -42,6 +80,11 @@ namespace MachiKoro_ML
             if(currentIndex == players.Length) { currentIndex = 0; }
             currentPlayer = players[currentIndex];
             Console.WriteLine($"{currentPlayer}'s turn!");
+            //If the current player is a computer, have them take their turn
+            if(currentPlayer.parentComputer != null)
+            {
+                currentPlayer.parentComputer.TakeTurn();
+            }
         }
         public void EvaluateRoll(int roll, bool doubles)
         {
@@ -111,7 +154,7 @@ namespace MachiKoro_ML
             //Activate cards
             foreach (Card c in allCards)
             {
-                if(c.activationNums == null) { continue; }
+                if (c.activationNums == null) { continue; }
                 for (int i = 0; i < c.activationNums.Length; i++)
                 {
                     if (c.activationNums[i] == roll)
@@ -125,7 +168,7 @@ namespace MachiKoro_ML
             if (currentPlayer.numCoins == 0)
             {
                 Console.WriteLine($"\r\n{currentPlayer} does not have enough money to buy anything");
-                if(!doubles)
+                if (!doubles)
                 {
                     IncrementTurn();
                 }
@@ -135,8 +178,42 @@ namespace MachiKoro_ML
                 }
                 return;
             }
-            
+
             //Buy phase
+            if(currentPlayer.parentComputer == null)
+            {
+                PlayerBuy(doubles);
+            }
+            else
+            {
+                Card newCard = new Card(currentPlayer.parentComputer.target, currentPlayer, this);
+                if (newCard.cost <= currentPlayer.numCoins)
+                {
+                    currentPlayer.AddCard(newCard);
+                    currentPlayer.ChangeCoins(-newCard.cost);
+                    Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                }
+                else
+                {
+                    Console.WriteLine($"\r\n{currentPlayer} did not buy anything");
+                }
+
+                if (!doubles)
+                {
+                    IncrementTurn();
+                }
+                else
+                {
+                    Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    currentPlayer.parentComputer.TakeTurn();
+                }
+                return;
+            }
+            
+        }
+
+        private void PlayerBuy(bool doubles)
+        {
             Console.WriteLine("\r\nChoose a card to buy, or pass\r\n");
             Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer)}");
             while (true)
@@ -156,7 +233,7 @@ namespace MachiKoro_ML
                 }
                 else if (Enum.TryParse(str.ToLower(), out Card.Establishments est))
                 {
-                    if(!CheckBuyValidity(est))
+                    if (!CheckBuyValidity(est))
                     {
                         Console.WriteLine($"Cannot buy duplicates of {est} - you already have one");
                         continue;
@@ -176,7 +253,7 @@ namespace MachiKoro_ML
                             Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
                         }
                         return;
-                            
+
                     }
                     else
                     {
@@ -189,6 +266,7 @@ namespace MachiKoro_ML
                 }
             }
         }
+
         public void PrintBalances()
         {
             Console.WriteLine("Balances:");
