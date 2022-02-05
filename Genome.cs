@@ -9,7 +9,7 @@ namespace MachiKoro_ML
     public class Genome
     {
         
-        static int[] allIDs =
+        static readonly int[] allIDs =
         {
             0,0,0,0,0,0,        //Wheat field
             1,1,1,1,1,1,        //Ranch
@@ -27,8 +27,8 @@ namespace MachiKoro_ML
             13,13,13,13,13,13,  //Apple orchard
             14,14,14,14,14,14,  //Fruit & Vegetable market
         };
-        int[] targetList;
-        string name = "";
+        readonly int[] targetList;
+        readonly string name = "";
         public Genome()
         {
 

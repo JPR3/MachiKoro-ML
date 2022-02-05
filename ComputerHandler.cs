@@ -10,7 +10,7 @@ namespace MachiKoro_ML
     {
         public PlayerHandler handler { get; private set; }
         public Card.Establishments target { get; private set; }
-        Genome genome = null;
+        public readonly Genome genome;
         public ComputerBase(Card.Establishments target) //Dumb computer
         {
             this.target = target;
