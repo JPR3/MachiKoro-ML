@@ -6,13 +6,19 @@ using System.Threading.Tasks;
 
 namespace MachiKoro_ML
 {
-    public class DumbComputer
+    public class ComputerBase
     {
         public PlayerHandler handler { get; private set; }
         public Card.Establishments target { get; private set; }
-        public DumbComputer(Card.Establishments target)
+        Genome genome = null;
+        public ComputerBase(Card.Establishments target) //Dumb computer
         {
             this.target = target;
+        }
+        public ComputerBase(Genome g) //Smart computer
+        {
+            genome = g;
+            target = 0;
         }
         public void SetHandler(PlayerHandler p)
         {

@@ -25,7 +25,7 @@ namespace MachiKoro_ML
         public int numRanches = 0;
         public int numNature = 0;
         public int numAgriculture = 0;
-        public readonly DumbComputer parentComputer;
+        public readonly ComputerBase parentComputer;
 
         public PlayerHandler(Game game, string nm)
         {
@@ -35,7 +35,7 @@ namespace MachiKoro_ML
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
         }
-        public PlayerHandler(Game game, string nm, DumbComputer cpu)
+        public PlayerHandler(Game game, string nm, ComputerBase cpu)
         {
             name = nm;
             this.game = game;

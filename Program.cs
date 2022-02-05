@@ -28,6 +28,7 @@ namespace MachiKoro_ML
         Command<string> INFO;
         Command CLOSE;
         Command DUMMYGAME;
+        Command TESTGENOME;
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
@@ -136,6 +137,11 @@ namespace MachiKoro_ML
             {
                 Environment.Exit(0);
             });
+            TESTGENOME = new Command("genome", "generates a sample genome", "genome", () =>
+            {
+                Genome g = new Genome();
+                Console.WriteLine("Genome: " + g);
+            });
             playingCommands = new List<object>
             {
                 CLOSE,
@@ -156,7 +162,8 @@ namespace MachiKoro_ML
                 PLAY,
                 DUMMYGAME,
                 RULES,
-                INFO
+                INFO,
+                TESTGENOME
 
             };
             commandList = outCommands;

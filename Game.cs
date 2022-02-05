@@ -40,16 +40,16 @@ namespace MachiKoro_ML
                 {
                     if(j == 0)
                     {
-                        newPlayer = new PlayerHandler(this, "Wheatly", new DumbComputer(Card.Establishments.wheat_field));
+                        newPlayer = new PlayerHandler(this, "Wheatly", new ComputerBase(Card.Establishments.wheat_field));
                     }
                     else
                     {
-                        newPlayer = new PlayerHandler(this, "Gump", new DumbComputer(Card.Establishments.forest));
+                        newPlayer = new PlayerHandler(this, "Gump", new ComputerBase(Card.Establishments.forest));
                     }
                 }
                 else
                 {
-                    newPlayer = new PlayerHandler(this, "Computer " + (j + 1), new DumbComputer(Card.Establishments.wheat_field));
+                    newPlayer = new PlayerHandler(this, "Computer " + (j + 1), new ComputerBase(Card.Establishments.wheat_field));
                 }
                 
                 players[playersIndex] = newPlayer;
