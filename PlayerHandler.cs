@@ -130,6 +130,17 @@ namespace MachiKoro_ML
             {
                 str += $"\t{cards[i]}\r\n";
             }
+            if(parentComputer != null)
+            {
+                if(parentComputer.genome != null)
+                {
+                    str += $"Genome: {parentComputer.genome}\r\n";
+                }
+                else
+                {
+                    str += "No genome\r\n";
+                }
+            }
             return str;
         }
         public Card[] GetCardsAsArray()
