@@ -18,6 +18,7 @@ namespace MachiKoro_ML
         Command HELP;
         Command<int> PLAY;
         Command PLAYER;
+        Command PLAYERS;
         Command ROLL;
         Command<int> FORCEROLL;
         Command ROLLONE;
@@ -63,6 +64,13 @@ namespace MachiKoro_ML
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
             {
                 Console.WriteLine(game.currentPlayer.GetInfo());
+            });
+            PLAYERS = new Command("players", "shows info about all players", "players", () =>
+            {
+                foreach(PlayerHandler p in game.players)
+                {
+                    Console.WriteLine(p.GetInfo());                
+                }
             });
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
@@ -147,6 +155,7 @@ namespace MachiKoro_ML
                 CLOSE,
                 HELP,
                 PLAYER,
+                PLAYERS,
                 ROLL,
                 FORCEROLL,
                 ROLLONE,
