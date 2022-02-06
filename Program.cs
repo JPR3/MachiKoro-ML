@@ -17,6 +17,7 @@ namespace MachiKoro_ML
         Game game;
         Command HELP;
         Command<int> PLAY;
+        Command<int, int> COMPLAY;
         Command PLAYER;
         Command PLAYERS;
         Command ROLL;
@@ -53,6 +54,17 @@ namespace MachiKoro_ML
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(x, this);
+                commandList = playingCommands;
+            });
+            COMPLAY = new Command<int, int>("complay", "begins a game with up to four human or computer players", "complay <player count> <computer count>", (h, c) =>
+            {
+                if(h + c > 4 || h + c < 1)
+                {
+                    Console.WriteLine("Must specify between 1 and 4 players");
+                    return;
+                }
+                Console.WriteLine("Starting a game!");
+                game = new Game(h, c, this);
                 commandList = playingCommands;
             });
             DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
@@ -169,6 +181,7 @@ namespace MachiKoro_ML
                 CLOSE,
                 HELP,
                 PLAY,
+                COMPLAY,
                 DUMMYGAME,
                 RULES,
                 INFO,
@@ -202,6 +215,12 @@ namespace MachiKoro_ML
                         {
                             Console.WriteLine();
                             (commandList[i] as Command<string>).Invoke(args[1]);
+                            Console.WriteLine();
+                        }
+                        else if (commandList[i] as Command<int, int> != null && args.Length == 3)
+                        {
+                            Console.WriteLine();
+                            (commandList[i] as Command<int, int>).Invoke(int.Parse(args[1]), int.Parse(args[2]));
                             Console.WriteLine();
                         }
                     }
