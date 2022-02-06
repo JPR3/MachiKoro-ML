@@ -57,7 +57,7 @@ namespace MachiKoro_ML
             DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
             {
                 Console.WriteLine("Starting a game!");
-                game = new Game(1, 2, this, true);
+                game = new Game(1, 0, this);
                 commandList = playingCommands;
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>

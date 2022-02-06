@@ -24,36 +24,39 @@ namespace MachiKoro_ML
             currentPlayer = players[0];
             prog = program;
         }
-        public Game(int numHumans, int numComputers, Program program, bool dummy)
+        public Game(int numHumans, int numComputers, Program program)
         {
             currentIndex = 0;
-            players = new PlayerHandler[numHumans + numComputers];
+            
+            if (numComputers != 0)
+            {
+                players = new PlayerHandler[numHumans + numComputers];
+                
+            }
+            else
+            {
+                players = new PlayerHandler[numHumans + 2];
+            }
             int playersIndex = numHumans;
+            //Add human players
             for (int i = 0; i < numHumans; i++)
             {
                 players[i] = new PlayerHandler(this, "Player " + (i + 1));
             }
-            for(int j = 0; j < numComputers; j++)
+            if(numComputers != 0)
             {
-                PlayerHandler newPlayer;
-                if (dummy)
+                //Add computer players
+                for (int j = 0; j < numComputers; j++)
                 {
-                    if(j == 0)
-                    {
-                        newPlayer = new PlayerHandler(this, "Wheatly", new ComputerBase(Card.Establishments.wheat_field));
-                    }
-                    else
-                    {
-                        newPlayer = new PlayerHandler(this, "Gump", new ComputerBase(Card.Establishments.forest));
-                    }
+                    PlayerHandler newComputer = new PlayerHandler(this, "Computer " + (j + 1), new ComputerBase(new Genome()));
+                    players[playersIndex] = newComputer;
+                    playersIndex++;
                 }
-                else
-                {
-                    newPlayer = new PlayerHandler(this, "Computer " + (j + 1), new ComputerBase(Card.Establishments.wheat_field));
-                }
-                
-                players[playersIndex] = newPlayer;
-                playersIndex++;
+            }
+            else //Dummy test game
+            {
+                players[playersIndex] = new PlayerHandler(this, "Wheatly", new ComputerBase(Card.Establishments.wheat_field));
+                players[playersIndex + 1] = new PlayerHandler(this, "Gump", new ComputerBase(Card.Establishments.forest));
             }
             currentPlayer = players[0];
             prog = program;
