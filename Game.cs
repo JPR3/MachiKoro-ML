@@ -187,7 +187,7 @@ namespace MachiKoro_ML
             {
                 PlayerBuy(doubles);
             }
-            else
+            else //Computer is buying
             {
                 Card newCard = new Card(currentPlayer.parentComputer.target, currentPlayer, this);
                 if (newCard.cost <= currentPlayer.numCoins)
@@ -195,6 +195,7 @@ namespace MachiKoro_ML
                     currentPlayer.AddCard(newCard);
                     currentPlayer.ChangeCoins(-newCard.cost);
                     Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                    currentPlayer.parentComputer.IncGenome();
                 }
                 else
                 {

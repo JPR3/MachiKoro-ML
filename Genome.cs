@@ -27,7 +27,7 @@ namespace MachiKoro_ML
             13,13,13,13,13,13,  //Apple orchard
             14,14,14,14,14,14,  //Fruit & Vegetable market
         };
-        readonly int[] targetList;
+        public readonly int[] targetList;
         readonly string name = "";
         public Genome()
         {

@@ -11,6 +11,7 @@ namespace MachiKoro_ML
         public PlayerHandler handler { get; private set; }
         public Card.Establishments target { get; private set; }
         public readonly Genome genome;
+        int genomeIndex = 0;
         public ComputerBase(Card.Establishments target) //Dumb computer
         {
             this.target = target;
@@ -18,11 +19,16 @@ namespace MachiKoro_ML
         public ComputerBase(Genome g) //Smart computer
         {
             genome = g;
-            target = 0;
+            target = (Card.Establishments)genome.targetList[0];
         }
         public void SetHandler(PlayerHandler p)
         {
             handler = p;
+        }
+        public void IncGenome()
+        {
+            genomeIndex++;
+            target = (Card.Establishments)genome.targetList[genomeIndex];
         }
         public void TakeTurn()
         {
