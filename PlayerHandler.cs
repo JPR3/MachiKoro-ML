@@ -134,7 +134,9 @@ namespace MachiKoro_ML
             {
                 if(parentComputer.genome != null)
                 {
-                    str += $"Genome: {parentComputer.genome}\r\n";
+                    str += $"\r\nGenome: {parentComputer.genome}\r\n";
+                    str += new string(' ', parentComputer.genomeIndex + 8) + "^\r\n";
+                    str += $"Target: {parentComputer.GetTargetName()}\r\n";
                 }
                 else
                 {
