@@ -189,6 +189,10 @@ namespace MachiKoro_ML
                 else if (currentPlayer.shouldLog)
                 {
                     Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    if(currentPlayer.parentComputer != null)
+                    {
+                        currentPlayer.parentComputer.TakeTurn();
+                    }
                 }
                 return;
             }

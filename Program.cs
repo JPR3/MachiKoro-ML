@@ -48,41 +48,45 @@ namespace MachiKoro_ML
             });
             PLAY = new Command<int>("play", "begins a game with up to four human players", "play <player count>", (x) =>
             {
-                if(x > 4 || x < 1) 
+                commandList = playingCommands;
+                if (x > 4 || x < 1) 
                 {
                     Console.WriteLine("Must specify between 1 and 4 players");
                     return; 
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(x, this);
-                commandList = playingCommands;
+                
             });
             COMPLAY = new Command<int, int>("complay", "begins a game with up to four human or computer players", "complay <player count> <computer count>", (h, c) =>
             {
-                if(h + c > 4 || h + c < 1)
+                commandList = playingCommands;
+                if (h + c > 4 || h + c < 1)
                 {
                     Console.WriteLine("Must specify between 1 and 4 players");
                     return;
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(h, c, this, true);
-                commandList = playingCommands;
+                
             });
             COMPUTERGAME = new Command<int>("computergame", "runs a single game set of up to four random computers", "computergame <computer count>", (x) =>
             {
+                commandList = playingCommands;
                 if (x > 4 || x < 1)
                 {
                     Console.WriteLine("Must specify between 1 and 4 computers");
                     return;
                 }
-                game = new Game(0, x, this, false);
-                commandList = playingCommands;
+                game = new Game(0, x, this, true);
+                
             });
             DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
             {
+                commandList = playingCommands;
                 Console.WriteLine("Starting a game!");
                 game = new Game(1, 0, this, true);
-                commandList = playingCommands;
+                
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
             {
@@ -242,13 +246,13 @@ namespace MachiKoro_ML
         }
         public void EndGame(PlayerHandler winner)
         {
-            Console.Clear();
+            //Console.Clear();
             if(winner != null)
             {
                 Console.WriteLine($"{winner} has collected all four landmark cards, they win!");
             }
             Console.WriteLine("Game ended");
-            
+            game = null;
             commandList = outCommands;
         }
     }
