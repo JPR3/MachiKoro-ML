@@ -19,12 +19,12 @@ namespace MachiKoro_ML
             players = new PlayerHandler[numPlayers];
             for (int i = 0; i < numPlayers; i++)
             {
-                players[i] = new PlayerHandler(this, "Player " + (i + 1));
+                players[i] = new PlayerHandler(this, "Player " + (i + 1), true);
             }
             currentPlayer = players[0];
             prog = program;
         }
-        public Game(int numHumans, int numComputers, Program program)
+        public Game(int numHumans, int numComputers, Program program, bool enableLogging)
         {
             currentIndex = 0;
             
@@ -41,22 +41,22 @@ namespace MachiKoro_ML
             //Add human players
             for (int i = 0; i < numHumans; i++)
             {
-                players[i] = new PlayerHandler(this, "Player " + (i + 1));
+                players[i] = new PlayerHandler(this, "Player " + (i + 1), true);
             }
             if(numComputers != 0)
             {
                 //Add computer players
                 for (int j = 0; j < numComputers; j++)
                 {
-                    PlayerHandler newComputer = new PlayerHandler(this, "Computer " + (j + 1), new ComputerBase(new Genome()));
+                    PlayerHandler newComputer = new PlayerHandler(this, "Computer " + (j + 1), new ComputerBase(new Genome()), enableLogging);
                     players[playersIndex] = newComputer;
                     playersIndex++;
                 }
             }
             else //Dummy test game
             {
-                players[playersIndex] = new PlayerHandler(this, "Wheatly", new ComputerBase(Card.Establishments.wheat_field));
-                players[playersIndex + 1] = new PlayerHandler(this, "Gump", new ComputerBase(Card.Establishments.forest));
+                players[playersIndex] = new PlayerHandler(this, "Wheatly", new ComputerBase(Card.Establishments.wheat_field), enableLogging);
+                players[playersIndex + 1] = new PlayerHandler(this, "Gump", new ComputerBase(Card.Establishments.forest), enableLogging);
             }
             currentPlayer = players[0];
             prog = program;
@@ -82,7 +82,10 @@ namespace MachiKoro_ML
             currentIndex++;
             if(currentIndex == players.Length) { currentIndex = 0; }
             currentPlayer = players[currentIndex];
-            Console.WriteLine($"{currentPlayer}'s turn!");
+            if(currentPlayer.shouldLog)
+            {
+                Console.WriteLine($"{currentPlayer}'s turn!");
+            }
             //If the current player is a computer, have them take their turn
             if(currentPlayer.parentComputer != null)
             {
@@ -91,7 +94,7 @@ namespace MachiKoro_ML
         }
         public void EvaluateRoll(int roll, bool doubles)
         {
-            if (currentPlayer.hasRadio && currentPlayer.canReroll)
+            if (currentPlayer.hasRadio && currentPlayer.canReroll && currentPlayer.parentComputer == null) //Allow computers to reroll at some point
             {
                 Console.WriteLine("Would you like to reroll your dice? (Y/N)");
                 while (true)
@@ -166,16 +169,24 @@ namespace MachiKoro_ML
                     }
                 }
             }
-            Console.WriteLine();
-            PrintBalances();
+            
+            if(currentPlayer.shouldLog)
+            {
+                Console.WriteLine();
+                PrintBalances();
+            }
+            
             if (currentPlayer.numCoins == 0)
             {
-                Console.WriteLine($"\r\n{currentPlayer} does not have enough money to buy anything");
+                if (currentPlayer.shouldLog)
+                {
+                    Console.WriteLine($"\r\n{currentPlayer} does not have enough money to buy anything");
+                }
                 if (!doubles)
                 {
                     IncrementTurn();
                 }
-                else
+                else if (currentPlayer.shouldLog)
                 {
                     Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
                 }
@@ -194,10 +205,13 @@ namespace MachiKoro_ML
                 {
                     currentPlayer.AddCard(newCard);
                     currentPlayer.ChangeCoins(-newCard.cost);
-                    Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                    if (currentPlayer.shouldLog)
+                    {
+                        Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                    }
                     currentPlayer.parentComputer.IncGenome();
                 }
-                else
+                else if (currentPlayer.shouldLog)
                 {
                     Console.WriteLine($"\r\n{currentPlayer} did not buy anything");
                 }
@@ -206,7 +220,7 @@ namespace MachiKoro_ML
                 {
                     IncrementTurn();
                 }
-                else
+                else if (currentPlayer.shouldLog)
                 {
                     Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
                     currentPlayer.parentComputer.TakeTurn();

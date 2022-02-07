@@ -26,17 +26,19 @@ namespace MachiKoro_ML
         public int numNature = 0;
         public int numAgriculture = 0;
         public readonly ComputerBase parentComputer;
-
-        public PlayerHandler(Game game, string nm)
+        public readonly bool shouldLog;
+        public PlayerHandler(Game game, string nm, bool log)
         {
+            shouldLog = log;
             name = nm;
             this.game = game;
             numCoins = 3;
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
         }
-        public PlayerHandler(Game game, string nm, ComputerBase cpu)
+        public PlayerHandler(Game game, string nm, ComputerBase cpu, bool log)
         {
+            shouldLog = log;
             name = nm;
             this.game = game;
             parentComputer = cpu;

@@ -89,7 +89,10 @@ namespace MachiKoro_ML
                     isTradable = true;
                     effect = (caller) =>
                     {
-                        Console.WriteLine($"{owner}'s {this} activated!");
+                        if(owner.shouldLog)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                        }
                         owner.ChangeCoins(1);
                         owner.numAgriculture++;
                     };
@@ -100,7 +103,10 @@ namespace MachiKoro_ML
                     isTradable = true;
                     effect = (caller) =>
                     {
-                        Console.WriteLine($"{owner}'s {this} activated!");
+                        if (owner.shouldLog)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                        }
                         owner.ChangeCoins(1);
                         owner.numRanches++;
                     };
@@ -113,7 +119,10 @@ namespace MachiKoro_ML
                     {
                         if(caller == owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             int change = 1;
                             if (owner.hasMall) { change = 2; }
                             owner.ChangeCoins(change);
@@ -128,7 +137,10 @@ namespace MachiKoro_ML
                     {
                         if(caller != owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             int targetSteal = 1; //Set to 2 if has mall
                             if(owner.hasMall) { targetSteal = 2; }
                             int stealNum = caller.GetMaxSteal(targetSteal);
@@ -136,9 +148,12 @@ namespace MachiKoro_ML
                             {
                                 caller.ChangeCoins(-stealNum);
                                 owner.ChangeCoins(stealNum);
-                                Console.WriteLine($"Stole {stealNum} from {caller}");
+                                if (owner.shouldLog)
+                                {
+                                    Console.WriteLine($"Stole {stealNum} from {caller}");
+                                }
                             }
-                            else
+                            else if (owner.shouldLog)
                             {
                                 Console.WriteLine("...but there was nothing to steal!");
                             }
@@ -153,7 +168,10 @@ namespace MachiKoro_ML
                     {
                         if(caller == owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             int change = 3;
                             if (owner.hasMall) { change = 4; }
                             owner.ChangeCoins(change);
@@ -166,7 +184,10 @@ namespace MachiKoro_ML
                     isTradable = true;
                     effect = (caller) =>
                     {
-                        Console.WriteLine($"{owner}'s {this} activated!");
+                        if (owner.shouldLog)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                        }
                         owner.ChangeCoins(1);
                         owner.numNature++;
                     };
@@ -180,7 +201,10 @@ namespace MachiKoro_ML
                     {
                         if(caller == owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             foreach (PlayerHandler player in game.players)
                             {
                                 if(player == owner) { continue; }
@@ -189,9 +213,12 @@ namespace MachiKoro_ML
                                 {
                                     player.ChangeCoins(-stealNum);
                                     owner.ChangeCoins(stealNum);
-                                    Console.WriteLine($"Stole {stealNum} from {player}");
+                                    if (owner.shouldLog)
+                                    {
+                                        Console.WriteLine($"Stole {stealNum} from {player}");
+                                    }
                                 }
-                                else
+                                else if(owner.shouldLog)
                                 {
                                     Console.WriteLine("...but there was nothing to steal!");
                                 }
@@ -208,19 +235,38 @@ namespace MachiKoro_ML
                     {
                         if (caller == owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
-                            //Prompt to pick another player
-                            Console.WriteLine($"{owner}, pick another player to steal up to 5 coins from");
-                            game.PrintBalances();
-                            PlayerHandler target = null;
-                            while(target == null)
+                            if (owner.shouldLog)
                             {
-                                string selection = Console.ReadLine();
-                                foreach (PlayerHandler player in game.players)
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
+                            PlayerHandler target = null;
+                            if(owner.parentComputer == null)
+                            {
+                                //Prompt to pick another player
+                                Console.WriteLine($"{owner}, pick another player to steal up to 5 coins from");
+                                game.PrintBalances();
+
+                                while (target == null)
                                 {
-                                    if(selection.ToLower().Equals(player.ToString().ToLower()))
+                                    string selection = Console.ReadLine();
+                                    foreach (PlayerHandler player in game.players)
                                     {
-                                        target = player;
+                                        if (selection.ToLower().Equals(player.ToString().ToLower()))
+                                        {
+                                            target = player;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //Computer picks opponent with most money
+                                target = game.players[0];
+                                foreach(PlayerHandler p in game.players)
+                                {
+                                    if(p != owner && p.numCoins > target.numCoins)
+                                    {
+                                        target = p;
                                     }
                                 }
                             }
@@ -228,7 +274,10 @@ namespace MachiKoro_ML
                             int stealNum = target.GetMaxSteal(5);
                             target.ChangeCoins(-stealNum);
                             owner.ChangeCoins(stealNum);
-                            Console.WriteLine($"\r\nStole {stealNum} from {target}");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"\r\nStole {stealNum} from {target}");
+                            }
 
 
                         }
@@ -327,7 +376,10 @@ namespace MachiKoro_ML
                     {
                         if (caller == owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             owner.ChangeCoins(3 * owner.numRanches);
                         }
                     };
@@ -340,7 +392,10 @@ namespace MachiKoro_ML
                     {
                         if (caller == owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             owner.ChangeCoins(3 * owner.numNature);
                         }
                     };
@@ -351,7 +406,10 @@ namespace MachiKoro_ML
                     isTradable = true;
                     effect = (caller) =>
                     {
-                        Console.WriteLine($"{owner}'s {this} activated!");
+                        if (owner.shouldLog)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                        }
                         owner.ChangeCoins(5);
                     };
                     break;
@@ -363,7 +421,10 @@ namespace MachiKoro_ML
                     {
                         if (caller != owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             int targetSteal = 2; //Set to 3 if has mall
                             if (owner.hasMall) { targetSteal = 3; }
                             int stealNum = caller.GetMaxSteal(targetSteal);
@@ -371,9 +432,12 @@ namespace MachiKoro_ML
                             {
                                 caller.ChangeCoins(-stealNum);
                                 owner.ChangeCoins(stealNum);
-                                Console.WriteLine($"Stole {stealNum} from {caller}");
+                                if (owner.shouldLog)
+                                {
+                                    Console.WriteLine($"Stole {stealNum} from {caller}");
+                                }
                             }
-                            else
+                            else if (owner.shouldLog)
                             {
                                 Console.WriteLine("...but there was nothing to steal!");
                             }
@@ -386,7 +450,10 @@ namespace MachiKoro_ML
                     isTradable = true;
                     effect = (caller) =>
                     {
-                        Console.WriteLine($"{owner}'s {this} activated!");
+                        if (owner.shouldLog)
+                        {
+                            Console.WriteLine($"{owner}'s {this} activated!");
+                        }
                         owner.ChangeCoins(3);
                     };
                     break;
@@ -398,7 +465,10 @@ namespace MachiKoro_ML
                     {
                         if (caller == owner)
                         {
-                            Console.WriteLine($"{owner}'s {this} activated!");
+                            if (owner.shouldLog)
+                            {
+                                Console.WriteLine($"{owner}'s {this} activated!");
+                            }
                             owner.ChangeCoins(2 * owner.numAgriculture);
                         }
                     };

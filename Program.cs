@@ -65,7 +65,7 @@ namespace MachiKoro_ML
                     return;
                 }
                 Console.WriteLine("Starting a game!");
-                game = new Game(h, c, this);
+                game = new Game(h, c, this, true);
                 commandList = playingCommands;
             });
             COMPUTERGAME = new Command<int>("computergame", "runs a single game set of up to four random computers", "computergame <computer count>", (x) =>
@@ -75,13 +75,13 @@ namespace MachiKoro_ML
                     Console.WriteLine("Must specify between 1 and 4 computers");
                     return;
                 }
-                game = new Game(0, x, this);
+                game = new Game(0, x, this, false);
                 commandList = playingCommands;
             });
             DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
             {
                 Console.WriteLine("Starting a game!");
-                game = new Game(1, 0, this);
+                game = new Game(1, 0, this, true);
                 commandList = playingCommands;
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>

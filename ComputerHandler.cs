@@ -27,6 +27,7 @@ namespace MachiKoro_ML
         }
         public void IncGenome()
         {
+            if(genome == null) { return; }
             genomeIndex++;
             target = (Card.Establishments)genome.targetList[genomeIndex];
         }
@@ -37,20 +38,27 @@ namespace MachiKoro_ML
         public void TakeTurn()
         {
             //Roll-------------------------------------------------------------------------------
-            Console.WriteLine($"{handler.name} is rolling...");
+            if (handler.shouldLog)
+            {
+                Console.WriteLine($"{handler.name} is rolling...");
+            }
+            
             RollData data = handler.Roll(handler.hasTrain); //Will always roll 2 dice if possible
             int rollNum = data.rollVal1 + data.rollVal2;
-            if (data.rollVal2 != 0)
+            if (handler.shouldLog)
             {
-                Console.WriteLine($"Rolled a {rollNum} ({data.rollVal1} + {data.rollVal2})");
-            }
-            else
-            {
-                Console.WriteLine($"Rolled a {rollNum}");
-            }
-            if (data.doubles)
-            {
-                Console.WriteLine("Doubles!");
+                if (data.rollVal2 != 0)
+                {
+                    Console.WriteLine($"Rolled a {rollNum} ({data.rollVal1} + {data.rollVal2})");
+                }
+                else
+                {
+                    Console.WriteLine($"Rolled a {rollNum}");
+                }
+                if (data.doubles)
+                {
+                    Console.WriteLine("Doubles!");
+                }
             }
             handler.game.EvaluateRoll(rollNum, data.doubles);
         }
