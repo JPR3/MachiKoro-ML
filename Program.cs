@@ -16,6 +16,7 @@ namespace MachiKoro_ML
     {
         Game game;
         Command HELP;
+        Command CLEAR;
         Command<int> PLAY;
         Command<int, int> COMPLAY;
         Command<int> COMPUTERGAME;
@@ -150,6 +151,10 @@ namespace MachiKoro_ML
             {
                 EndGame(null);
             });
+            CLEAR = new Command("clear", "clears the console", "clear", () =>
+            {
+                Console.Clear();
+            });
             RULES = new Command("rules", "prints the rules of the game", "rules", () =>
             {
                 Console.WriteLine("Machi Koro is a game played with 2 to 4 players, where players take turns rolling dice and collecting income\r\n" +
@@ -189,6 +194,7 @@ namespace MachiKoro_ML
                 FORCEBUY,
                 BALANCE,
                 EXIT,
+                CLEAR,
                 INFO
             };
             outCommands = new List<object>
@@ -200,6 +206,7 @@ namespace MachiKoro_ML
                 COMPUTERGAME,
                 DUMMYGAME,
                 RULES,
+                CLEAR,
                 INFO,
                 TESTGENOME
 
@@ -246,7 +253,6 @@ namespace MachiKoro_ML
         }
         public void EndGame(PlayerHandler winner)
         {
-            //Console.Clear();
             if(winner != null)
             {
                 Console.WriteLine($"{winner} has collected all four landmark cards, they win!");

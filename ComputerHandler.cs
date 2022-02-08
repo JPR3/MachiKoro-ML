@@ -29,7 +29,10 @@ namespace MachiKoro_ML
         {
             if(genome == null) { return; }
             genomeIndex++;
-            target = (Card.Establishments)genome.targetList[genomeIndex];
+            if(genomeIndex < genome.targetList.Length)
+            {
+                target = (Card.Establishments)genome.targetList[genomeIndex];
+            }
         }
         public string GetTargetName()
         {
