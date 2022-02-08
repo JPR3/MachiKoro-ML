@@ -10,12 +10,12 @@ namespace MachiKoro_ML
     {
         public readonly PlayerHandler[] players;
         public PlayerHandler currentPlayer { get; private set; }
-        int currentIndex;
+        int currentPlayerIndex;
         public List<Card> allCards = new List<Card>();
         private readonly Program prog;
         public Game(int numPlayers, Program program)
         {
-            currentIndex = 0;
+            currentPlayerIndex = 0;
             players = new PlayerHandler[numPlayers];
             for (int i = 0; i < numPlayers; i++)
             {
@@ -26,7 +26,7 @@ namespace MachiKoro_ML
         }
         public Game(int numHumans, int numComputers, Program program, bool enableLogging)
         {
-            currentIndex = 0;
+            currentPlayerIndex = 0;
             
             if (numComputers != 0)
             {
@@ -79,9 +79,9 @@ namespace MachiKoro_ML
                 return;
             }
             //Change the current player
-            currentIndex++;
-            if(currentIndex == players.Length) { currentIndex = 0; }
-            currentPlayer = players[currentIndex];
+            currentPlayerIndex++;
+            if(currentPlayerIndex == players.Length) { currentPlayerIndex = 0; }
+            currentPlayer = players[currentPlayerIndex];
             if(currentPlayer.shouldLog)
             {
                 Console.WriteLine($"{currentPlayer}'s turn!");
@@ -186,9 +186,12 @@ namespace MachiKoro_ML
                 {
                     IncrementTurn();
                 }
-                else if (currentPlayer.shouldLog)
+                else 
                 {
-                    Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    if (currentPlayer.shouldLog)
+                    {
+                        Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    }
                     if(currentPlayer.parentComputer != null)
                     {
                         currentPlayer.parentComputer.TakeTurn();
@@ -224,9 +227,12 @@ namespace MachiKoro_ML
                 {
                     IncrementTurn();
                 }
-                else if (currentPlayer.shouldLog)
+                else 
                 {
-                    Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    if (currentPlayer.shouldLog)
+                    {
+                        Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                    }
                     currentPlayer.parentComputer.TakeTurn();
                 }
                 return;

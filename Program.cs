@@ -79,7 +79,7 @@ namespace MachiKoro_ML
                     Console.WriteLine("Must specify between 1 and 4 computers");
                     return;
                 }
-                game = new Game(0, x, this, true);
+                game = new Game(0, x, this, false);
                 
             });
             DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
