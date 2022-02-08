@@ -22,9 +22,6 @@ namespace MachiKoro_ML
         public bool hasCenter { get; private set; } = false;
         public bool canReroll = false;
         public readonly Game game;
-        public int numRanches = 0;
-        public int numNature = 0;
-        public int numAgriculture = 0;
         public readonly ComputerBase parentComputer;
         public readonly bool shouldLog;
         public PlayerHandler(Game game, string nm, bool log)
@@ -150,6 +147,18 @@ namespace MachiKoro_ML
         public Card[] GetCardsAsArray()
         {
             return cards.ToArray();
+        }
+        public int NumOfSymbol(Card.Symbols targetSymbol)
+        {
+            int count = 0;
+            foreach(Card c in cards)
+            {
+                if(c.symbol == targetSymbol)
+                {
+                    count++;
+                }
+            }
+            return count;
         }
     }
     public class RollData

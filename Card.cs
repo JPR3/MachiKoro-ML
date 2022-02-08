@@ -30,10 +30,19 @@ namespace MachiKoro_ML
             amusement_park,
             radio_tower
         };
-
+        public enum Symbols
+        {
+            agriculture,
+            ranch,
+            nature,
+            restaurant,
+            store,
+            factory,
+            major
+        }
 
         readonly Establishments est;
-        public bool isTradable { get; private set; }
+        public Symbols symbol { get; private set; }
         PlayerHandler owner;
         static readonly string[] descriptions =
         {
@@ -86,7 +95,7 @@ namespace MachiKoro_ML
                 case Establishments.wheat_field:
                     activationNums = new int[1] { 1 };
                     cost = 1;
-                    isTradable = true;
+                    symbol = Symbols.agriculture;
                     effect = (caller) =>
                     {
                         if(owner.shouldLog)
@@ -94,13 +103,12 @@ namespace MachiKoro_ML
                             Console.WriteLine($"{owner}'s {this} activated!");
                         }
                         owner.ChangeCoins(1);
-                        owner.numAgriculture++;
                     };
                     break;
                 case Establishments.ranch:
                     activationNums = new int[1] { 2 };
                     cost = 1;
-                    isTradable = true;
+                    symbol = Symbols.ranch;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -108,13 +116,12 @@ namespace MachiKoro_ML
                             Console.WriteLine($"{owner}'s {this} activated!");
                         }
                         owner.ChangeCoins(1);
-                        owner.numRanches++;
                     };
                     break;
                 case Establishments.bakery:
                     activationNums = new int[2] { 2, 3 };
                     cost = 1;
-                    isTradable = true;
+                    symbol = Symbols.store;
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -132,7 +139,7 @@ namespace MachiKoro_ML
                 case Establishments.cafe:
                     activationNums = new int[1] { 3 };
                     cost = 2;
-                    isTradable = true;
+                    symbol = Symbols.restaurant;
                     effect = (caller) =>
                     {
                         if(caller != owner)
@@ -163,7 +170,7 @@ namespace MachiKoro_ML
                 case Establishments.convenience_store:
                     activationNums = new int[1] { 4 };
                     cost = 2;
-                    isTradable = true;
+                    symbol = Symbols.store;
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -181,7 +188,7 @@ namespace MachiKoro_ML
                 case Establishments.forest:
                     activationNums = new int[1] { 5 };
                     cost = 3;
-                    isTradable = true;
+                    symbol = Symbols.nature;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -189,13 +196,12 @@ namespace MachiKoro_ML
                             Console.WriteLine($"{owner}'s {this} activated!");
                         }
                         owner.ChangeCoins(1);
-                        owner.numNature++;
                     };
                     break;
                 case Establishments.stadium:
                     activationNums = new int[1] { 6 };
                     cost = 6;
-                    isTradable = false;
+                    symbol = Symbols.major;
                     owner.AddStadium();
                     effect = (caller) =>
                     {
@@ -229,7 +235,7 @@ namespace MachiKoro_ML
                 case Establishments.tv_station:
                     activationNums = new int[1] { 6 };
                     cost = 7;
-                    isTradable = false;
+                    symbol = Symbols.major;
                     owner.AddStation();
                     effect = (caller) =>
                     {
@@ -286,7 +292,7 @@ namespace MachiKoro_ML
                 case Establishments.business_center:
                     activationNums = new int[1] { 6 };
                     cost = 8;
-                    isTradable = false;
+                    symbol = Symbols.major;
                     owner.AddCenter();
                     effect = (caller) =>
                     {
@@ -302,7 +308,7 @@ namespace MachiKoro_ML
                                     Console.WriteLine($"\r\n{player}");
                                     foreach (Card c in player.GetCardsAsArray())
                                     {
-                                        if(c.isTradable)
+                                        if(c.symbol != Symbols.major)
                                         {
                                             Console.WriteLine($"\t{c}");
                                         }
@@ -332,7 +338,7 @@ namespace MachiKoro_ML
                                 Card[] cards = targetPlayer.GetCardsAsArray();
                                 foreach (Card card in cards)
                                 {
-                                    if (card.isTradable && selection.ToLower().Equals(card.ToString()))
+                                    if (card.symbol != Symbols.major && selection.ToLower().Equals(card.ToString()))
                                     {
                                         targetCard = card;
                                     }
@@ -342,7 +348,7 @@ namespace MachiKoro_ML
                             Console.WriteLine("Pick a card to give away");
                             foreach (Card c in owner.GetCardsAsArray())
                             {
-                                if(c.isTradable)
+                                if(c.symbol != Symbols.major)
                                 {
                                     Console.WriteLine($"\t{c}");
                                 }
@@ -354,7 +360,7 @@ namespace MachiKoro_ML
                                 Card[] cards = owner.GetCardsAsArray();
                                 foreach (Card card in cards)
                                 {
-                                    if (card.isTradable && selection.ToLower().Equals(card.ToString()))
+                                    if (card.symbol != Symbols.major && selection.ToLower().Equals(card.ToString()))
                                     {
                                         ownerCard = card;
                                     }
@@ -371,7 +377,7 @@ namespace MachiKoro_ML
                 case Establishments.cheese_factory:
                     activationNums = new int[1] { 7 };
                     cost = 5;
-                    isTradable = true;
+                    symbol = Symbols.factory;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -380,14 +386,14 @@ namespace MachiKoro_ML
                             {
                                 Console.WriteLine($"{owner}'s {this} activated!");
                             }
-                            owner.ChangeCoins(3 * owner.numRanches);
+                            owner.ChangeCoins(3 * owner.NumOfSymbol(Symbols.ranch));
                         }
                     };
                     break;
                 case Establishments.furniture_factory:
                     activationNums = new int[1] { 8 };
                     cost = 3;
-                    isTradable = true;
+                    symbol = Symbols.factory;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -396,14 +402,14 @@ namespace MachiKoro_ML
                             {
                                 Console.WriteLine($"{owner}'s {this} activated!");
                             }
-                            owner.ChangeCoins(3 * owner.numNature);
+                            owner.ChangeCoins(3 * owner.NumOfSymbol(Symbols.nature));
                         }
                     };
                     break;
                 case Establishments.mine:
                     activationNums = new int[1] { 9 };
                     cost = 6;
-                    isTradable = true;
+                    symbol = Symbols.nature;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -416,7 +422,7 @@ namespace MachiKoro_ML
                 case Establishments.family_restaurant:
                     activationNums = new int[2] { 9, 10 };
                     cost = 3;
-                    isTradable = true;
+                    symbol = Symbols.restaurant;
                     effect = (caller) =>
                     {
                         if (caller != owner)
@@ -447,7 +453,7 @@ namespace MachiKoro_ML
                 case Establishments.apple_orchard:
                     activationNums = new int[1] { 10 };
                     cost = 3;
-                    isTradable = true;
+                    symbol = Symbols.agriculture;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -460,7 +466,7 @@ namespace MachiKoro_ML
                 case Establishments.fruit_and_vegetable_market:
                     activationNums = new int[2] { 11, 12 };
                     cost = 2;
-                    isTradable = true;
+                    symbol = Symbols.factory;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -469,14 +475,14 @@ namespace MachiKoro_ML
                             {
                                 Console.WriteLine($"{owner}'s {this} activated!");
                             }
-                            owner.ChangeCoins(2 * owner.numAgriculture);
+                            owner.ChangeCoins(2 * owner.NumOfSymbol(Symbols.agriculture));
                         }
                     };
                     break;
                 case Establishments.train_station:
                     activationNums = null;
                     cost = 4;
-                    isTradable = false;
+                    symbol = Symbols.major;
                     effect = null;
                     //Change owner's values to represent abilities of new card
                     owner.AddTrain();
@@ -484,7 +490,7 @@ namespace MachiKoro_ML
                 case Establishments.shopping_mall:
                     activationNums = null;
                     cost = 10;
-                    isTradable = false;
+                    symbol = Symbols.major;
                     effect = null;
                     //Change owner values
                     owner.AddMall();
@@ -492,7 +498,7 @@ namespace MachiKoro_ML
                 case Establishments.amusement_park:
                     activationNums = null;
                     cost = 16;
-                    isTradable = false;
+                    symbol = Symbols.major;
                     effect = null;
                     //Change owner values
                     owner.AddPark();
@@ -500,7 +506,7 @@ namespace MachiKoro_ML
                 case Establishments.radio_tower:
                     activationNums = null;
                     cost = 22;
-                    isTradable = false;
+                    symbol = Symbols.major;
                     effect = null;
                     //Change owner values
                     owner.AddRadio();

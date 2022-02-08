@@ -19,7 +19,7 @@ namespace MachiKoro_ML
             5,5,5,5,5,5,        //Forest
             6,                  //Stadium
             7,                  //TV station
-            8,                  //Business center
+          //8,                  //Business centers are currently disabled
             9,9,9,9,9,9,        //Cheese factory
             10,10,10,10,10,10,  //Furniture factory
             11,11,11,11,11,11,  //Mine

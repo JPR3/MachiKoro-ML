@@ -295,6 +295,14 @@ namespace MachiKoro_ML
             foreach (PlayerHandler p in players)
             {
                 Console.WriteLine($"{p}: {p.numCoins}");
+                if (p.parentComputer != null)
+                {
+                    string str = "";
+                    str += $"\r\nGenome: {p.parentComputer.genome}\r\n";
+                    str += new string(' ', p.parentComputer.genomeIndex + 8) + "^\r\n";
+                    str += $"Target: {p.parentComputer.GetTargetName()}\r\n";
+                    Console.WriteLine(str);
+                }
             }
         }
         bool CheckBuyValidity(Card.Establishments est)
