@@ -10,17 +10,17 @@ namespace MachiKoro_ML
     public class PlayerHandler
     {
         public readonly string name;
-        public int numCoins { get; private set; }
-        Random random = new Random();
-        List<Card> cards = new List<Card>();
-        public bool hasTrain { get; private set; } = false;
-        public bool hasMall { get; private set; } = false;
-        public bool hasPark { get; private set; } = false;
-        public bool hasRadio { get; private set; } = false;
-        public bool HasStadium { get; private set; } = false;
-        public bool hasStation { get; private set; } = false;
-        public bool hasCenter { get; private set; } = false;
-        public int numLandmarks { get; private set; } = 0;
+        public int NumCoins { get; private set; }
+        readonly Random random = new Random();
+        readonly List<Card> cards = new List<Card>();
+        public bool HasTrain { get; private set; }
+        public bool HasMall { get; private set; }
+        public bool HasPark { get; private set; }
+        public bool HasRadio { get; private set; }
+        public bool HasStadium { get; private set; }
+        public bool HasStation { get; private set; }
+        public bool HasCenter { get; private set; }
+        public int NumLandmarks { get; private set; } = 0;
         public bool canReroll = false;
         public readonly Game game;
         public readonly ComputerBase parentComputer;
@@ -30,7 +30,7 @@ namespace MachiKoro_ML
             shouldLog = log;
             name = nm;
             this.game = game;
-            numCoins = 3;
+            NumCoins = 3;
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
         }
@@ -41,30 +41,30 @@ namespace MachiKoro_ML
             this.game = game;
             parentComputer = cpu;
             parentComputer.SetHandler(this);
-            numCoins = 3;
+            NumCoins = 3;
             AddCard(new Card(Card.Establishments.wheat_field, this, game));
             AddCard(new Card(Card.Establishments.bakery, this, game));
         }
         public void AddTrain()
         {
-            hasTrain = true;
-            numLandmarks++;
+            HasTrain = true;
+            NumLandmarks++;
         }
         public void AddMall()
         {
-            hasMall = true;
-            numLandmarks++;
+            HasMall = true;
+            NumLandmarks++;
         }
         public void AddPark()
         {
-            hasPark = true;
-            numLandmarks++;
+            HasPark = true;
+            NumLandmarks++;
         }
         public void AddRadio()
         {
-            hasRadio = true;
+            HasRadio = true;
             canReroll = true;
-            numLandmarks++;
+            NumLandmarks++;
         }
         public void AddStadium()
         {
@@ -72,22 +72,22 @@ namespace MachiKoro_ML
         }
         public void AddStation()
         {
-            hasStation = true;
+            HasStation = true;
         }
         public void AddCenter()
         {
-            hasCenter = true;
+            HasCenter = true;
         }
         public int GetMaxSteal(int targetMax)
         {
-            int toSteal = numCoins;
+            int toSteal = NumCoins;
             if(toSteal > targetMax) { toSteal = targetMax; }
             return toSteal;
         }
         public bool ChangeCoins(int c)
         {
-            if(c < 0 && numCoins + c < 0) { return false; }
-            numCoins += c;
+            if(c < 0 && NumCoins + c < 0) { return false; }
+            NumCoins += c;
             return true;
         }
         public void AddCard(Card card)
@@ -119,7 +119,7 @@ namespace MachiKoro_ML
             {
                 secondRoll = random.Next(1, 7);
             }
-            return new RollData(firstRoll, secondRoll, (firstRoll == secondRoll) && hasPark);
+            return new RollData(firstRoll, secondRoll, (firstRoll == secondRoll) && HasPark);
         }
 
         override public string ToString()
@@ -129,7 +129,7 @@ namespace MachiKoro_ML
 
         public string GetInfo()
         {
-            string str = $"Name: {name}\r\nCoins: {numCoins}\r\nCards\r\n";
+            string str = $"Name: {name}\r\nCoins: {NumCoins}\r\nCards\r\n";
             for(int i = 0; i < cards.Count; i++)
             {
                 str += $"\t{cards[i]}\r\n";
@@ -139,7 +139,7 @@ namespace MachiKoro_ML
                 if(parentComputer.genome != null)
                 {
                     str += $"\r\nGenome: {parentComputer.genome}\r\n";
-                    str += new string(' ', parentComputer.genomeIndex + 8) + "^\r\n";
+                    str += new string(' ', parentComputer.GenomeIndex + 8) + "^\r\n";
                     str += $"Target: {parentComputer.GetTargetName()}\r\n";
                 }
                 else
@@ -158,7 +158,7 @@ namespace MachiKoro_ML
             int count = 0;
             foreach(Card c in cards)
             {
-                if(c.symbol == targetSymbol)
+                if(c.Symbol == targetSymbol)
                 {
                     count++;
                 }

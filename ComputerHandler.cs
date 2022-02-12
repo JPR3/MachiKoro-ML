@@ -8,47 +8,47 @@ namespace MachiKoro_ML
 {
     public class ComputerBase
     {
-        public PlayerHandler handler { get; private set; }
-        public Card.Establishments target { get; private set; }
+        public PlayerHandler Handler { get; private set; }
+        public Card.Establishments Target { get; private set; }
         public readonly Genome genome;
-        public int genomeIndex { get; private set; } = 0;
+        public int GenomeIndex { get; private set; } = 0;
         public ComputerBase(Card.Establishments target) //Dumb computer
         {
-            this.target = target;
+            this.Target = target;
         }
         public ComputerBase(Genome g) //Smart computer
         {
             genome = g;
-            target = (Card.Establishments)genome.targetList[0];
+            Target = (Card.Establishments)genome.targetList[0];
         }
         public void SetHandler(PlayerHandler p)
         {
-            handler = p;
+            Handler = p;
         }
         public void IncGenome()
         {
             if(genome == null) { return; }
-            genomeIndex++;
-            if(genomeIndex < genome.targetList.Length)
+            GenomeIndex++;
+            if(GenomeIndex < genome.targetList.Length)
             {
-                target = (Card.Establishments)genome.targetList[genomeIndex];
+                Target = (Card.Establishments)genome.targetList[GenomeIndex];
             }
         }
         public string GetTargetName()
         {
-            return target.ToString();
+            return Target.ToString();
         }
         public void TakeTurn()
         {
             //Roll-------------------------------------------------------------------------------
-            if (handler.shouldLog)
+            if (Handler.shouldLog)
             {
-                Console.WriteLine($"{handler.name} is rolling...");
+                Console.WriteLine($"{Handler.name} is rolling...");
             }
             
-            RollData data = handler.Roll(handler.hasTrain); //Will always roll 2 dice if possible
+            RollData data = Handler.Roll(Handler.HasTrain); //Will always roll 2 dice if possible
             int rollNum = data.rollVal1 + data.rollVal2;
-            if (handler.shouldLog)
+            if (Handler.shouldLog)
             {
                 if (data.rollVal2 != 0)
                 {
@@ -63,7 +63,7 @@ namespace MachiKoro_ML
                     Console.WriteLine("Doubles!");
                 }
             }
-            handler.game.EvaluateRoll(rollNum, data.doubles);
+            Handler.game.EvaluateRoll(rollNum, data.doubles);
         }
     }
 }

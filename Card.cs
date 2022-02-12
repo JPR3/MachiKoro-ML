@@ -43,7 +43,7 @@ namespace MachiKoro_ML
         }
 
         readonly Establishments est;
-        public Symbols symbol { get; private set; }
+        public Symbols Symbol { get; private set; }
         PlayerHandler owner;
         static readonly string[] descriptions =
         {
@@ -67,10 +67,10 @@ namespace MachiKoro_ML
             "Amusement_park: 16 coins - LANDMARK CARD\r\n\tIf you roll doubles, take another turn",
             "Radio_tower: 22 coins - LANDMARK CARD\r\n\tOnce per turn, you can choose to reroll your dice"
         };
-        public int[] activationNums { get; private set; }
-        public int cost { get; private set; }
+        public int[] ActivationNums { get; private set; }
+        public int Cost { get; private set; }
         Action<PlayerHandler> effect;
-        Game game;
+        readonly Game game;
 
         public Card(Establishments estType, PlayerHandler owner, Game game)
         {
@@ -94,9 +94,9 @@ namespace MachiKoro_ML
             switch (type)
             {
                 case Establishments.wheat_field:
-                    activationNums = new int[1] { 1 };
-                    cost = 1;
-                    symbol = Symbols.agriculture;
+                    ActivationNums = new int[1] { 1 };
+                    Cost = 1;
+                    Symbol = Symbols.agriculture;
                     effect = (caller) =>
                     {
                         if(owner.shouldLog)
@@ -107,9 +107,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.ranch:
-                    activationNums = new int[1] { 2 };
-                    cost = 1;
-                    symbol = Symbols.ranch;
+                    ActivationNums = new int[1] { 2 };
+                    Cost = 1;
+                    Symbol = Symbols.ranch;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -120,9 +120,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.bakery:
-                    activationNums = new int[2] { 2, 3 };
-                    cost = 1;
-                    symbol = Symbols.store;
+                    ActivationNums = new int[2] { 2, 3 };
+                    Cost = 1;
+                    Symbol = Symbols.store;
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -132,15 +132,15 @@ namespace MachiKoro_ML
                                 Console.WriteLine($"{owner}'s {this} activated!");
                             }
                             int change = 1;
-                            if (owner.hasMall) { change = 2; }
+                            if (owner.HasMall) { change = 2; }
                             owner.ChangeCoins(change);
                         }
                     };
                     break;
                 case Establishments.cafe:
-                    activationNums = new int[1] { 3 };
-                    cost = 2;
-                    symbol = Symbols.restaurant;
+                    ActivationNums = new int[1] { 3 };
+                    Cost = 2;
+                    Symbol = Symbols.restaurant;
                     effect = (caller) =>
                     {
                         if(caller != owner)
@@ -150,7 +150,7 @@ namespace MachiKoro_ML
                                 Console.WriteLine($"{owner}'s {this} activated!");
                             }
                             int targetSteal = 1; //Set to 2 if has mall
-                            if(owner.hasMall) { targetSteal = 2; }
+                            if(owner.HasMall) { targetSteal = 2; }
                             int stealNum = caller.GetMaxSteal(targetSteal);
                             if(stealNum != 0)
                             {
@@ -169,9 +169,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.convenience_store:
-                    activationNums = new int[1] { 4 };
-                    cost = 2;
-                    symbol = Symbols.store;
+                    ActivationNums = new int[1] { 4 };
+                    Cost = 2;
+                    Symbol = Symbols.store;
                     effect = (caller) =>
                     {
                         if(caller == owner)
@@ -181,15 +181,15 @@ namespace MachiKoro_ML
                                 Console.WriteLine($"{owner}'s {this} activated!");
                             }
                             int change = 3;
-                            if (owner.hasMall) { change = 4; }
+                            if (owner.HasMall) { change = 4; }
                             owner.ChangeCoins(change);
                         }
                     };
                     break;
                 case Establishments.forest:
-                    activationNums = new int[1] { 5 };
-                    cost = 3;
-                    symbol = Symbols.nature;
+                    ActivationNums = new int[1] { 5 };
+                    Cost = 3;
+                    Symbol = Symbols.nature;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -200,9 +200,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.stadium:
-                    activationNums = new int[1] { 6 };
-                    cost = 6;
-                    symbol = Symbols.major;
+                    ActivationNums = new int[1] { 6 };
+                    Cost = 6;
+                    Symbol = Symbols.major;
                     owner.AddStadium();
                     effect = (caller) =>
                     {
@@ -234,9 +234,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.tv_station:
-                    activationNums = new int[1] { 6 };
-                    cost = 7;
-                    symbol = Symbols.major;
+                    ActivationNums = new int[1] { 6 };
+                    Cost = 7;
+                    Symbol = Symbols.major;
                     owner.AddStation();
                     effect = (caller) =>
                     {
@@ -271,7 +271,7 @@ namespace MachiKoro_ML
                                 target = game.players[0];
                                 foreach(PlayerHandler p in game.players)
                                 {
-                                    if(p != owner && p.numCoins > target.numCoins)
+                                    if(p != owner && p.NumCoins > target.NumCoins)
                                     {
                                         target = p;
                                     }
@@ -291,9 +291,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.business_center:
-                    activationNums = new int[1] { 6 };
-                    cost = 8;
-                    symbol = Symbols.major;
+                    ActivationNums = new int[1] { 6 };
+                    Cost = 8;
+                    Symbol = Symbols.major;
                     owner.AddCenter();
                     effect = (caller) =>
                     {
@@ -309,7 +309,7 @@ namespace MachiKoro_ML
                                     Console.WriteLine($"\r\n{player}");
                                     foreach (Card c in player.GetCardsAsArray())
                                     {
-                                        if(c.symbol != Symbols.major && c.symbol != Symbols.landmark)
+                                        if(c.Symbol != Symbols.major && c.Symbol != Symbols.landmark)
                                         {
                                             Console.WriteLine($"\t{c}");
                                         }
@@ -339,7 +339,7 @@ namespace MachiKoro_ML
                                 Card[] cards = targetPlayer.GetCardsAsArray();
                                 foreach (Card card in cards)
                                 {
-                                    if (card.symbol != Symbols.major && card.symbol != Symbols.landmark && selection.ToLower().Equals(card.ToString()))
+                                    if (card.Symbol != Symbols.major && card.Symbol != Symbols.landmark && selection.ToLower().Equals(card.ToString()))
                                     {
                                         targetCard = card;
                                     }
@@ -349,7 +349,7 @@ namespace MachiKoro_ML
                             Console.WriteLine("Pick a card to give away");
                             foreach (Card c in owner.GetCardsAsArray())
                             {
-                                if(c.symbol != Symbols.major && c.symbol != Symbols.landmark)
+                                if(c.Symbol != Symbols.major && c.Symbol != Symbols.landmark)
                                 {
                                     Console.WriteLine($"\t{c}");
                                 }
@@ -361,7 +361,7 @@ namespace MachiKoro_ML
                                 Card[] cards = owner.GetCardsAsArray();
                                 foreach (Card card in cards)
                                 {
-                                    if (card.symbol != Symbols.major && card.symbol != Symbols.landmark && selection.ToLower().Equals(card.ToString()))
+                                    if (card.Symbol != Symbols.major && card.Symbol != Symbols.landmark && selection.ToLower().Equals(card.ToString()))
                                     {
                                         ownerCard = card;
                                     }
@@ -376,9 +376,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.cheese_factory:
-                    activationNums = new int[1] { 7 };
-                    cost = 5;
-                    symbol = Symbols.factory;
+                    ActivationNums = new int[1] { 7 };
+                    Cost = 5;
+                    Symbol = Symbols.factory;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -392,9 +392,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.furniture_factory:
-                    activationNums = new int[1] { 8 };
-                    cost = 3;
-                    symbol = Symbols.factory;
+                    ActivationNums = new int[1] { 8 };
+                    Cost = 3;
+                    Symbol = Symbols.factory;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -408,9 +408,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.mine:
-                    activationNums = new int[1] { 9 };
-                    cost = 6;
-                    symbol = Symbols.nature;
+                    ActivationNums = new int[1] { 9 };
+                    Cost = 6;
+                    Symbol = Symbols.nature;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -421,9 +421,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.family_restaurant:
-                    activationNums = new int[2] { 9, 10 };
-                    cost = 3;
-                    symbol = Symbols.restaurant;
+                    ActivationNums = new int[2] { 9, 10 };
+                    Cost = 3;
+                    Symbol = Symbols.restaurant;
                     effect = (caller) =>
                     {
                         if (caller != owner)
@@ -433,7 +433,7 @@ namespace MachiKoro_ML
                                 Console.WriteLine($"{owner}'s {this} activated!");
                             }
                             int targetSteal = 2; //Set to 3 if has mall
-                            if (owner.hasMall) { targetSteal = 3; }
+                            if (owner.HasMall) { targetSteal = 3; }
                             int stealNum = caller.GetMaxSteal(targetSteal);
                             if (stealNum != 0)
                             {
@@ -452,9 +452,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.apple_orchard:
-                    activationNums = new int[1] { 10 };
-                    cost = 3;
-                    symbol = Symbols.agriculture;
+                    ActivationNums = new int[1] { 10 };
+                    Cost = 3;
+                    Symbol = Symbols.agriculture;
                     effect = (caller) =>
                     {
                         if (owner.shouldLog)
@@ -465,9 +465,9 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.fruit_and_vegetable_market:
-                    activationNums = new int[2] { 11, 12 };
-                    cost = 2;
-                    symbol = Symbols.factory;
+                    ActivationNums = new int[2] { 11, 12 };
+                    Cost = 2;
+                    Symbol = Symbols.factory;
                     effect = (caller) =>
                     {
                         if (caller == owner)
@@ -481,36 +481,36 @@ namespace MachiKoro_ML
                     };
                     break;
                 case Establishments.train_station:
-                    activationNums = null;
-                    cost = 4;
-                    symbol = Symbols.landmark;
+                    ActivationNums = null;
+                    Cost = 4;
+                    Symbol = Symbols.landmark;
                     effect = (x) =>
                     {
                         owner.AddTrain();
                     };
                     break;
                 case Establishments.shopping_mall:
-                    activationNums = null;
-                    cost = 10;
-                    symbol = Symbols.landmark;
+                    ActivationNums = null;
+                    Cost = 10;
+                    Symbol = Symbols.landmark;
                     effect = (x) =>
                     {
                         owner.AddMall();
                     };
                     break;
                 case Establishments.amusement_park:
-                    activationNums = null;
-                    cost = 16;
-                    symbol = Symbols.landmark;
+                    ActivationNums = null;
+                    Cost = 16;
+                    Symbol = Symbols.landmark;
                     effect = (x) =>
                     {
                         owner.AddPark();
                     };
                     break;
                 case Establishments.radio_tower:
-                    activationNums = null;
-                    cost = 22;
-                    symbol = Symbols.landmark;
+                    ActivationNums = null;
+                    Cost = 22;
+                    Symbol = Symbols.landmark;
                     effect = (x) =>
                     {
                         owner.AddRadio();
@@ -521,7 +521,7 @@ namespace MachiKoro_ML
 
         public static string GetPurchasableEstablishments(PlayerHandler player)
         {
-            int coins = player.numCoins;
+            int coins = player.NumCoins;
             string str = "";
             //One costs
             str += $"{GetEstDesc(Establishments.wheat_field)}\r\n{GetEstDesc(Establishments.ranch)}\r\n{GetEstDesc(Establishments.bakery)}\r\n";
@@ -535,7 +535,7 @@ namespace MachiKoro_ML
                 $"{GetEstDesc(Establishments.apple_orchard)}\r\n";
             if(coins < 4) { return str; }
             //Four costs
-            if(!player.hasTrain)
+            if(!player.HasTrain)
             {
                 str += $"{GetEstDesc(Establishments.train_station)}\r\n";
             }
@@ -550,31 +550,31 @@ namespace MachiKoro_ML
             }
             if(coins < 7) { return str; }
             //Seven costs
-            if(!player.hasStation)
+            if(!player.HasStation)
             {
                 str += $"{GetEstDesc(Establishments.tv_station)}\r\n";
             }
             if(coins < 8) { return str; }
             //Eight costs
-            if(!player.hasCenter)
+            if(!player.HasCenter)
             {
                 str += $"{GetEstDesc(Establishments.business_center)}\r\n";
             }
             if(coins < 10) { return str; }
             //Ten costs
-            if(!player.hasMall)
+            if(!player.HasMall)
             {
                 str += $"{GetEstDesc(Establishments.shopping_mall)}\r\n";
             }
             if(coins < 16) { return str; }
             //Sixteen costs
-            if (!player.hasPark)
+            if (!player.HasPark)
             {
                 str += $"{GetEstDesc(Establishments.amusement_park)}\r\n";
             }
             if(coins < 22) { return str; }
             //Twenty-two costs
-            if (!player.hasRadio)
+            if (!player.HasRadio)
             {
                 str += $"{GetEstDesc(Establishments.radio_tower)}\r\n";
             }

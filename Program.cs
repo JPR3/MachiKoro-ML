@@ -91,7 +91,7 @@ namespace MachiKoro_ML
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
             {
-                Console.WriteLine(game.currentPlayer.GetInfo());
+                Console.WriteLine(game.CurrentPlayer.GetInfo());
             });
             PLAYERS = new Command("players", "shows info about all players", "players", () =>
             {
@@ -102,7 +102,7 @@ namespace MachiKoro_ML
             });
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
-                RollData data = game.currentPlayer.Roll(game.currentPlayer.hasTrain);
+                RollData data = game.CurrentPlayer.Roll(game.CurrentPlayer.HasTrain);
                 int rollNum = data.rollVal1 + data.rollVal2;
                 if(data.rollVal2 != 0)
                 {
@@ -125,7 +125,7 @@ namespace MachiKoro_ML
             });
             ROLLONE = new Command("rollone", "rolls only one die", "rollone", () =>
             {
-                RollData data = game.currentPlayer.Roll(false);
+                RollData data = game.CurrentPlayer.Roll(false);
                 int rollNum = data.rollVal1;
                 Console.WriteLine($"Rolled a {rollNum}");
                 game.EvaluateRoll(rollNum, false);
@@ -138,8 +138,8 @@ namespace MachiKoro_ML
             {
                 if (Enum.TryParse(x.ToLower(), out Card.Establishments est))
                 {
-                    Card newCard = new Card(est, game.currentPlayer, game);
-                    game.currentPlayer.AddCard(newCard);
+                    Card newCard = new Card(est, game.CurrentPlayer, game);
+                    game.CurrentPlayer.AddCard(newCard);
                     Console.WriteLine($"Force-bought {newCard}");
                 }
                 else
@@ -258,7 +258,7 @@ namespace MachiKoro_ML
                 Console.WriteLine($"{orderedResults[0]} has collected all four landmark cards, they win!\r\nFull results:");
                 foreach(PlayerHandler p in orderedResults)
                 {
-                    Console.Write($"\r\n{p}, with {p.numLandmarks} landmarks and {p.numCoins} coins");
+                    Console.Write($"\r\n{p}, with {p.NumLandmarks} landmarks and {p.NumCoins} coins");
                     if(p.parentComputer != null)
                     {
                         Console.Write($" - {p.parentComputer.genome}");

@@ -9,7 +9,7 @@ namespace MachiKoro_ML
     public class Game
     {
         public readonly PlayerHandler[] players;
-        public PlayerHandler currentPlayer { get; private set; }
+        public PlayerHandler CurrentPlayer { get; private set; }
         int currentPlayerIndex;
         public List<Card> allCards = new List<Card>();
         private readonly Program prog;
@@ -21,7 +21,7 @@ namespace MachiKoro_ML
             {
                 players[i] = new PlayerHandler(this, "Player " + (i + 1), true);
             }
-            currentPlayer = players[0];
+            CurrentPlayer = players[0];
             prog = program;
         }
         public Game(int numHumans, int numComputers, Program program, bool enableLogging)
@@ -58,22 +58,22 @@ namespace MachiKoro_ML
                 players[playersIndex] = new PlayerHandler(this, "Wheatly", new ComputerBase(Card.Establishments.wheat_field), enableLogging);
                 players[playersIndex + 1] = new PlayerHandler(this, "Gump", new ComputerBase(Card.Establishments.forest), enableLogging);
             }
-            currentPlayer = players[0];
+            CurrentPlayer = players[0];
             prog = program;
             if(numHumans == 0)
             {
-                currentPlayer.parentComputer.TakeTurn();
+                CurrentPlayer.parentComputer.TakeTurn();
             }
         }
         public void IncrementTurn()
         {
             //Reset values for current player
-            if(currentPlayer.hasRadio)
+            if(CurrentPlayer.HasRadio)
             {
-                currentPlayer.canReroll = true;
+                CurrentPlayer.canReroll = true;
             }
             //Check for a win
-            if(currentPlayer.hasMall && currentPlayer.hasPark && currentPlayer.hasRadio && currentPlayer.hasTrain)
+            if(CurrentPlayer.HasMall && CurrentPlayer.HasPark && CurrentPlayer.HasRadio && CurrentPlayer.HasTrain)
             {
                 //Order the winners
                 PlayerHandler[] orderedResults = new PlayerHandler[players.Length];
@@ -84,7 +84,7 @@ namespace MachiKoro_ML
                     for (int j = i + 1; j < orderedResults.Length; j++)
                     {
                         PlayerHandler p2 = orderedResults[j];
-                        if (p1.numLandmarks < p2.numLandmarks || p1.numLandmarks == p2.numLandmarks && p1.numCoins < p2.numCoins)
+                        if (p1.NumLandmarks < p2.NumLandmarks || p1.NumLandmarks == p2.NumLandmarks && p1.NumCoins < p2.NumCoins)
                         {
                             orderedResults[i] = p2;
                             orderedResults[j] = p1;
@@ -97,20 +97,20 @@ namespace MachiKoro_ML
             //Change the current player
             currentPlayerIndex++;
             if(currentPlayerIndex == players.Length) { currentPlayerIndex = 0; }
-            currentPlayer = players[currentPlayerIndex];
-            if(currentPlayer.shouldLog)
+            CurrentPlayer = players[currentPlayerIndex];
+            if(CurrentPlayer.shouldLog)
             {
-                Console.WriteLine($"{currentPlayer}'s turn!");
+                Console.WriteLine($"{CurrentPlayer}'s turn!");
             }
             //If the current player is a computer, have them take their turn
-            if(currentPlayer.parentComputer != null)
+            if(CurrentPlayer.parentComputer != null)
             {
-                currentPlayer.parentComputer.TakeTurn();
+                CurrentPlayer.parentComputer.TakeTurn();
             }
         }
         public void EvaluateRoll(int roll, bool doubles)
         {
-            if (currentPlayer.hasRadio && currentPlayer.canReroll && currentPlayer.parentComputer == null) //Allow computers to reroll at some point
+            if (CurrentPlayer.HasRadio && CurrentPlayer.canReroll && CurrentPlayer.parentComputer == null) //Allow computers to reroll at some point
             {
                 Console.WriteLine("Would you like to reroll your dice? (Y/N)");
                 while (true)
@@ -118,9 +118,9 @@ namespace MachiKoro_ML
                     string str = Console.ReadLine();
                     if (str.ToLower().Equals("y"))
                     {
-                        currentPlayer.canReroll = false;
+                        CurrentPlayer.canReroll = false;
                         RollData data;
-                        if (currentPlayer.hasTrain)
+                        if (CurrentPlayer.HasTrain)
                         {
                             //Determine how many dice to roll
                             Console.WriteLine("Roll two dice? (Y/N)");
@@ -129,12 +129,12 @@ namespace MachiKoro_ML
                                 string str2 = Console.ReadLine();
                                 if (str2.ToLower().Equals("y"))
                                 {
-                                    data = currentPlayer.Roll(true);
+                                    data = CurrentPlayer.Roll(true);
                                     break;
                                 }
                                 else if (str2.ToLower().Equals("n"))
                                 {
-                                    data = currentPlayer.Roll(false);
+                                    data = CurrentPlayer.Roll(false);
                                     break;
                                 }
                                 else
@@ -145,7 +145,7 @@ namespace MachiKoro_ML
                         }
                         else
                         {
-                            data = currentPlayer.Roll(false);
+                            data = CurrentPlayer.Roll(false);
                         }
                         int rollNum = data.rollVal1 + data.rollVal2;
                         if (data.rollVal2 != 0)
@@ -176,27 +176,27 @@ namespace MachiKoro_ML
             //Activate cards
             foreach (Card c in allCards)
             {
-                if (c.activationNums == null) { continue; }
-                for (int i = 0; i < c.activationNums.Length; i++)
+                if (c.ActivationNums == null) { continue; }
+                for (int i = 0; i < c.ActivationNums.Length; i++)
                 {
-                    if (c.activationNums[i] == roll)
+                    if (c.ActivationNums[i] == roll)
                     {
-                        c.Invoke(currentPlayer);
+                        c.Invoke(CurrentPlayer);
                     }
                 }
             }
             
-            if(currentPlayer.shouldLog)
+            if(CurrentPlayer.shouldLog)
             {
                 Console.WriteLine();
                 PrintBalances();
             }
             
-            if (currentPlayer.numCoins == 0)
+            if (CurrentPlayer.NumCoins == 0)
             {
-                if (currentPlayer.shouldLog)
+                if (CurrentPlayer.shouldLog)
                 {
-                    Console.WriteLine($"\r\n{currentPlayer} does not have enough money to buy anything");
+                    Console.WriteLine($"\r\n{CurrentPlayer} does not have enough money to buy anything");
                 }
                 if (!doubles)
                 {
@@ -204,43 +204,43 @@ namespace MachiKoro_ML
                 }
                 else 
                 {
-                    if (currentPlayer.shouldLog)
+                    if (CurrentPlayer.shouldLog)
                     {
-                        Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                        Console.WriteLine($"\r\n{CurrentPlayer} goes again, because they rolled doubles");
                     }
-                    if(currentPlayer.parentComputer != null)
+                    if(CurrentPlayer.parentComputer != null)
                     {
-                        currentPlayer.parentComputer.TakeTurn();
+                        CurrentPlayer.parentComputer.TakeTurn();
                     }
                 }
                 return;
             }
 
             //Buy phase
-            if(currentPlayer.parentComputer == null)
+            if(CurrentPlayer.parentComputer == null)
             {
                 PlayerBuy(doubles);
             }
             else //Computer is buying
             {
-                Card newCard = new Card(currentPlayer.parentComputer.target, currentPlayer, this);
-                if (newCard.cost <= currentPlayer.numCoins)
+                Card newCard = new Card(CurrentPlayer.parentComputer.Target, CurrentPlayer, this);
+                if (newCard.Cost <= CurrentPlayer.NumCoins)
                 {
-                    currentPlayer.AddCard(newCard);
-                    if (newCard.symbol == Card.Symbols.landmark)
+                    CurrentPlayer.AddCard(newCard);
+                    if (newCard.Symbol == Card.Symbols.landmark)
                     {
-                        newCard.Invoke(currentPlayer);
+                        newCard.Invoke(CurrentPlayer);
                     }
-                    currentPlayer.ChangeCoins(-newCard.cost);
-                    if (currentPlayer.shouldLog)
+                    CurrentPlayer.ChangeCoins(-newCard.Cost);
+                    if (CurrentPlayer.shouldLog)
                     {
-                        Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                        Console.WriteLine($"\r\nBought {newCard}\r\n{CurrentPlayer} has {CurrentPlayer.NumCoins} coins remaining\r\n");
                     }
-                    currentPlayer.parentComputer.IncGenome();
+                    CurrentPlayer.parentComputer.IncGenome();
                 }
-                else if (currentPlayer.shouldLog)
+                else if (CurrentPlayer.shouldLog)
                 {
-                    Console.WriteLine($"\r\n{currentPlayer} did not buy anything");
+                    Console.WriteLine($"\r\n{CurrentPlayer} did not buy anything");
                 }
 
                 if (!doubles)
@@ -249,11 +249,11 @@ namespace MachiKoro_ML
                 }
                 else 
                 {
-                    if (currentPlayer.shouldLog)
+                    if (CurrentPlayer.shouldLog)
                     {
-                        Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                        Console.WriteLine($"\r\n{CurrentPlayer} goes again, because they rolled doubles");
                     }
-                    currentPlayer.parentComputer.TakeTurn();
+                    CurrentPlayer.parentComputer.TakeTurn();
                 }
                 return;
             }
@@ -263,7 +263,7 @@ namespace MachiKoro_ML
         private void PlayerBuy(bool doubles)
         {
             Console.WriteLine("\r\nChoose a card to buy, or pass\r\n");
-            Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(currentPlayer)}");
+            Console.WriteLine($"Purchasable cards:\r\n{Card.GetPurchasableEstablishments(CurrentPlayer)}");
             while (true)
             {
                 string str = Console.ReadLine();
@@ -275,7 +275,7 @@ namespace MachiKoro_ML
                     }
                     else
                     {
-                        Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                        Console.WriteLine($"\r\n{CurrentPlayer} goes again, because they rolled doubles");
                     }
                     return;
                 }
@@ -286,30 +286,30 @@ namespace MachiKoro_ML
                         Console.WriteLine($"Cannot buy duplicates of {est} - you already have one");
                         continue;
                     }
-                    Card newCard = new Card(est, currentPlayer, this);
-                    if (newCard.cost <= currentPlayer.numCoins)
+                    Card newCard = new Card(est, CurrentPlayer, this);
+                    if (newCard.Cost <= CurrentPlayer.NumCoins)
                     {
-                        currentPlayer.AddCard(newCard);
-                        if(newCard.symbol == Card.Symbols.landmark)
+                        CurrentPlayer.AddCard(newCard);
+                        if(newCard.Symbol == Card.Symbols.landmark)
                         {
-                            newCard.Invoke(currentPlayer);
+                            newCard.Invoke(CurrentPlayer);
                         }
-                        currentPlayer.ChangeCoins(-newCard.cost);
-                        Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
+                        CurrentPlayer.ChangeCoins(-newCard.Cost);
+                        Console.WriteLine($"\r\nBought {newCard}\r\n{CurrentPlayer} has {CurrentPlayer.NumCoins} coins remaining\r\n");
                         if (!doubles)
                         {
                             IncrementTurn();
                         }
                         else
                         {
-                            Console.WriteLine($"\r\n{currentPlayer} goes again, because they rolled doubles");
+                            Console.WriteLine($"\r\n{CurrentPlayer} goes again, because they rolled doubles");
                         }
                         return;
 
                     }
                     else
                     {
-                        Console.WriteLine($"Cannot afford {newCard} - you have {currentPlayer.numCoins} coins");
+                        Console.WriteLine($"Cannot afford {newCard} - you have {CurrentPlayer.NumCoins} coins");
                     }
                 }
                 else
@@ -324,12 +324,12 @@ namespace MachiKoro_ML
             Console.WriteLine("Balances:");
             foreach (PlayerHandler p in players)
             {
-                Console.WriteLine($"{p}: {p.numCoins}");
+                Console.WriteLine($"{p}: {p.NumCoins}");
                 if (p.parentComputer != null)
                 {
                     string str = "";
                     str += $"\r\nGenome: {p.parentComputer.genome}\r\n";
-                    str += new string(' ', p.parentComputer.genomeIndex + 8) + "^\r\n";
+                    str += new string(' ', p.parentComputer.GenomeIndex + 8) + "^\r\n";
                     str += $"Target: {p.parentComputer.GetTargetName()}\r\n";
                     Console.WriteLine(str);
                 }
@@ -340,25 +340,25 @@ namespace MachiKoro_ML
             switch(est)
             {
                 case Card.Establishments.stadium:
-                    if (currentPlayer.HasStadium) { return false; }
+                    if (CurrentPlayer.HasStadium) { return false; }
                     break;
                 case Card.Establishments.tv_station:
-                    if (currentPlayer.hasStation) { return false; }
+                    if (CurrentPlayer.HasStation) { return false; }
                     break;
                 case Card.Establishments.business_center:
-                    if (currentPlayer.hasCenter) { return false; }
+                    if (CurrentPlayer.HasCenter) { return false; }
                     break;
                 case Card.Establishments.train_station:
-                    if (currentPlayer.hasTrain) { return false; }
+                    if (CurrentPlayer.HasTrain) { return false; }
                     break;
                 case Card.Establishments.shopping_mall:
-                    if (currentPlayer.hasMall) { return false; }
+                    if (CurrentPlayer.HasMall) { return false; }
                     break;
                 case Card.Establishments.amusement_park:
-                    if (currentPlayer.hasPark) { return false; }
+                    if (CurrentPlayer.HasPark) { return false; }
                     break;
                 case Card.Establishments.radio_tower:
-                    if (currentPlayer.hasRadio) { return false; }
+                    if (CurrentPlayer.HasRadio) { return false; }
                     break;
             }
             return true;
