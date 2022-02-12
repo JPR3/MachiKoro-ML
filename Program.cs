@@ -16,6 +16,7 @@ namespace MachiKoro_ML
     {
         Game game;
         Command HELP;
+        Command<string> SYNTAX;
         Command CLEAR;
         Command<int> PLAY;
         Command<int, int> COMPLAY;
@@ -45,6 +46,17 @@ namespace MachiKoro_ML
                     CommandBase commandBase = commandList[i] as CommandBase;
                     string output = $"{commandBase.commandId} - {commandBase.commandDescription}";
                     Console.WriteLine(output);
+                }
+            });
+            SYNTAX = new Command<string>("?", "shows the proper syntax for a command - used as '? <command>'", "? <command>", (x) =>
+            {
+                for(int i = 0; i < commandList.Count; i++)
+                {
+                    CommandBase commandBase = commandList[i] as CommandBase;
+                    if(commandBase.commandId.Equals(x))
+                    {
+                        Console.WriteLine($"{commandBase.commandDescription} - '{commandBase.commandSyntax}'");
+                    }
                 }
             });
             PLAY = new Command<int>("play", "begins a game with up to four human players", "play <player count>", (x) =>
@@ -186,6 +198,7 @@ namespace MachiKoro_ML
             {
                 CLOSE,
                 HELP,
+                SYNTAX,
                 PLAYER,
                 PLAYERS,
                 ROLL,
@@ -201,6 +214,7 @@ namespace MachiKoro_ML
             {
                 CLOSE,
                 HELP,
+                SYNTAX,
                 PLAY,
                 COMPLAY,
                 COMPUTERGAME,
