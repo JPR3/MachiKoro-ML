@@ -17,9 +17,10 @@ namespace MachiKoro_ML
         public bool hasMall { get; private set; } = false;
         public bool hasPark { get; private set; } = false;
         public bool hasRadio { get; private set; } = false;
-        public bool hasStadium { get; private set; } = false;
+        public bool HasStadium { get; private set; } = false;
         public bool hasStation { get; private set; } = false;
         public bool hasCenter { get; private set; } = false;
+        public int numLandmarks { get; private set; } = 0;
         public bool canReroll = false;
         public readonly Game game;
         public readonly ComputerBase parentComputer;
@@ -47,23 +48,27 @@ namespace MachiKoro_ML
         public void AddTrain()
         {
             hasTrain = true;
+            numLandmarks++;
         }
         public void AddMall()
         {
             hasMall = true;
+            numLandmarks++;
         }
         public void AddPark()
         {
             hasPark = true;
+            numLandmarks++;
         }
         public void AddRadio()
         {
             hasRadio = true;
             canReroll = true;
+            numLandmarks++;
         }
         public void AddStadium()
         {
-            hasStadium = true;
+            HasStadium = true;
         }
         public void AddStation()
         {

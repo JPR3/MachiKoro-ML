@@ -251,13 +251,22 @@ namespace MachiKoro_ML
                 }
             }
         }
-        public void EndGame(PlayerHandler winner)
+        public void EndGame(PlayerHandler[] orderedResults)
         {
-            if(winner != null)
+            if(orderedResults != null)
             {
-                Console.WriteLine($"{winner} has collected all four landmark cards, they win!");
+                Console.WriteLine($"{orderedResults[0]} has collected all four landmark cards, they win!\r\nFull results:");
+                foreach(PlayerHandler p in orderedResults)
+                {
+                    Console.Write($"\r\n{p}, with {p.numLandmarks} landmarks and {p.numCoins} coins");
+                    if(p.parentComputer != null)
+                    {
+                        Console.Write($" - {p.parentComputer.genome}");
+                    }
+                }
+
             }
-            Console.WriteLine("Game ended");
+            Console.WriteLine("\r\nGame ended");
             game = null;
             commandList = outCommands;
         }

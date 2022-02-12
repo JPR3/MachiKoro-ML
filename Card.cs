@@ -38,7 +38,8 @@ namespace MachiKoro_ML
             restaurant,
             store,
             factory,
-            major
+            major,
+            landmark
         }
 
         readonly Establishments est;
@@ -308,7 +309,7 @@ namespace MachiKoro_ML
                                     Console.WriteLine($"\r\n{player}");
                                     foreach (Card c in player.GetCardsAsArray())
                                     {
-                                        if(c.symbol != Symbols.major)
+                                        if(c.symbol != Symbols.major && c.symbol != Symbols.landmark)
                                         {
                                             Console.WriteLine($"\t{c}");
                                         }
@@ -338,7 +339,7 @@ namespace MachiKoro_ML
                                 Card[] cards = targetPlayer.GetCardsAsArray();
                                 foreach (Card card in cards)
                                 {
-                                    if (card.symbol != Symbols.major && selection.ToLower().Equals(card.ToString()))
+                                    if (card.symbol != Symbols.major && card.symbol != Symbols.landmark && selection.ToLower().Equals(card.ToString()))
                                     {
                                         targetCard = card;
                                     }
@@ -348,7 +349,7 @@ namespace MachiKoro_ML
                             Console.WriteLine("Pick a card to give away");
                             foreach (Card c in owner.GetCardsAsArray())
                             {
-                                if(c.symbol != Symbols.major)
+                                if(c.symbol != Symbols.major && c.symbol != Symbols.landmark)
                                 {
                                     Console.WriteLine($"\t{c}");
                                 }
@@ -360,7 +361,7 @@ namespace MachiKoro_ML
                                 Card[] cards = owner.GetCardsAsArray();
                                 foreach (Card card in cards)
                                 {
-                                    if (card.symbol != Symbols.major && selection.ToLower().Equals(card.ToString()))
+                                    if (card.symbol != Symbols.major && card.symbol != Symbols.landmark && selection.ToLower().Equals(card.ToString()))
                                     {
                                         ownerCard = card;
                                     }
@@ -482,34 +483,38 @@ namespace MachiKoro_ML
                 case Establishments.train_station:
                     activationNums = null;
                     cost = 4;
-                    symbol = Symbols.major;
-                    effect = null;
-                    //Change owner's values to represent abilities of new card
-                    owner.AddTrain();
+                    symbol = Symbols.landmark;
+                    effect = (x) =>
+                    {
+                        owner.AddTrain();
+                    };
                     break;
                 case Establishments.shopping_mall:
                     activationNums = null;
                     cost = 10;
-                    symbol = Symbols.major;
-                    effect = null;
-                    //Change owner values
-                    owner.AddMall();
+                    symbol = Symbols.landmark;
+                    effect = (x) =>
+                    {
+                        owner.AddMall();
+                    };
                     break;
                 case Establishments.amusement_park:
                     activationNums = null;
                     cost = 16;
-                    symbol = Symbols.major;
-                    effect = null;
-                    //Change owner values
-                    owner.AddPark();
+                    symbol = Symbols.landmark;
+                    effect = (x) =>
+                    {
+                        owner.AddPark();
+                    };
                     break;
                 case Establishments.radio_tower:
                     activationNums = null;
                     cost = 22;
-                    symbol = Symbols.major;
-                    effect = null;
-                    //Change owner values
-                    owner.AddRadio();
+                    symbol = Symbols.landmark;
+                    effect = (x) =>
+                    {
+                        owner.AddRadio();
+                    };
                     break;
             }
         }
@@ -539,7 +544,7 @@ namespace MachiKoro_ML
             str += $"{GetEstDesc(Establishments.cheese_factory)}\r\n";
             if(coins < 6) { return str; }
             //Six costs
-            if(!player.hasStadium)
+            if(!player.HasStadium)
             {
                 str += $"{GetEstDesc(Establishments.stadium)}\r\n{GetEstDesc(Establishments.mine)}\r\n";
             }

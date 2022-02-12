@@ -75,7 +75,23 @@ namespace MachiKoro_ML
             //Check for a win
             if(currentPlayer.hasMall && currentPlayer.hasPark && currentPlayer.hasRadio && currentPlayer.hasTrain)
             {
-                prog.EndGame(currentPlayer);
+                //Order the winners
+                PlayerHandler[] orderedResults = new PlayerHandler[players.Length];
+                Array.Copy(players, orderedResults, players.Length);
+                for(int i = 0; i < orderedResults.Length; i++)
+                {
+                    PlayerHandler p1 = orderedResults[i];
+                    for (int j = i + 1; j < orderedResults.Length; j++)
+                    {
+                        PlayerHandler p2 = orderedResults[j];
+                        if (p1.numLandmarks < p2.numLandmarks || p1.numLandmarks == p2.numLandmarks && p1.numCoins < p2.numCoins)
+                        {
+                            orderedResults[i] = p2;
+                            orderedResults[j] = p1;
+                        }
+                    }
+                }
+                prog.EndGame(orderedResults);
                 return;
             }
             //Change the current player
@@ -211,6 +227,10 @@ namespace MachiKoro_ML
                 if (newCard.cost <= currentPlayer.numCoins)
                 {
                     currentPlayer.AddCard(newCard);
+                    if (newCard.symbol == Card.Symbols.landmark)
+                    {
+                        newCard.Invoke(currentPlayer);
+                    }
                     currentPlayer.ChangeCoins(-newCard.cost);
                     if (currentPlayer.shouldLog)
                     {
@@ -270,6 +290,10 @@ namespace MachiKoro_ML
                     if (newCard.cost <= currentPlayer.numCoins)
                     {
                         currentPlayer.AddCard(newCard);
+                        if(newCard.symbol == Card.Symbols.landmark)
+                        {
+                            newCard.Invoke(currentPlayer);
+                        }
                         currentPlayer.ChangeCoins(-newCard.cost);
                         Console.WriteLine($"\r\nBought {newCard}\r\n{currentPlayer} has {currentPlayer.numCoins} coins remaining\r\n");
                         if (!doubles)
@@ -316,7 +340,7 @@ namespace MachiKoro_ML
             switch(est)
             {
                 case Card.Establishments.stadium:
-                    if (currentPlayer.hasStadium) { return false; }
+                    if (currentPlayer.HasStadium) { return false; }
                     break;
                 case Card.Establishments.tv_station:
                     if (currentPlayer.hasStation) { return false; }
