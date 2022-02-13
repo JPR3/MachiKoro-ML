@@ -22,6 +22,7 @@ namespace MachiKoro_ML
         Command<int, int> COMPLAY;
         Command<int> COMPUTERGAME;
         Command TESTMATCH;
+        Command TESTGEN;
         Command PLAYER;
         Command PLAYERS;
         Command ROLL;
@@ -39,6 +40,7 @@ namespace MachiKoro_ML
         List<object> playingCommands;
         List<object> commandList;
         List<PlayerHandler[]> matchResults = new List<PlayerHandler[]>();
+        List<Genome[]> genResults = new List<Genome[]>();
         public void ReadCommands()
         {
             HELP = new Command("help", "shows a list of currently usable commands", "help", () =>
@@ -99,9 +101,26 @@ namespace MachiKoro_ML
             TESTMATCH = new Command("match", "runs a single match of four random computers", "match", () =>
             {
                 commandList = playingCommands;
-                RunMatch(4);
+                Genome[] genomes = { new Genome(), new Genome(), new Genome(), new Genome() };
+                RunMatch(genomes, false);
                 matchResults.Clear();
                 commandList = outCommands;
+            });
+            TESTGEN = new Command("generation", "runs a single generation", "generation", () =>
+            {
+                commandList = playingCommands;
+                Genome[][] genomes = new Genome[10][];
+                for(int i = 0; i < genomes.Length; i++)
+                {
+                    genomes[i] = new Genome[4];
+                    for(int j = 0; j < 4; j++)
+                    {
+                        genomes[i][j] = new Genome();
+                    }
+                }
+                RunGen(genomes);
+                commandList = outCommands;
+
             });
             DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
             {
@@ -228,6 +247,7 @@ namespace MachiKoro_ML
                 COMPLAY,
                 COMPUTERGAME,
                 TESTMATCH,
+                TESTGEN,
                 DUMMYGAME,
                 RULES,
                 CLEAR,
@@ -275,23 +295,17 @@ namespace MachiKoro_ML
                 }
             }
         }
-        public void RunMatch(int playerCount)
+        public void RunMatch(Genome[] genomes, bool isGen)
         {
-            Genome[] genomes = new Genome[playerCount];
-            for(int i = 0; i < genomes.Length; i++)
-            {
-                genomes[i] = new Genome();
-            }
-            for (int i = 0; i < playerCount; i++)
+            for (int i = 0; i < genomes.Length; i++)
             {
                 //Run three games, then rotate order
-                for(int ii = 0; ii < 3; ii++)
+                for (int ii = 0; ii < 3; ii++)
                 {
-                    game = null;
                     game = new Game(genomes, this, false, true);
                 }
-                Genome[] temp = new Genome[playerCount];
-                for(int j = 0; j < genomes.Length - 1; j++)
+                Genome[] temp = new Genome[genomes.Length];
+                for (int j = 0; j < genomes.Length - 1; j++)
                 {
                     temp[j + 1] = genomes[j];
                 }
@@ -313,24 +327,56 @@ namespace MachiKoro_ML
                     }
                 }
             }
-            for (int i = 0; i < matchResults.Count; i++)
+            if(!isGen)
             {
-                Console.WriteLine($"\r\nGame {i + 1}");
-                foreach (PlayerHandler p in matchResults[i])
+
+                for (int i = 0; i < matchResults.Count; i++)
                 {
-                    Console.Write($"\r\n{p.parentComputer.genome}, with {p.NumLandmarks} landmarks and {p.NumCoins} coins");
+                    Console.WriteLine($"\r\nGame {i + 1}");
+                    foreach (PlayerHandler p in matchResults[i])
+                    {
+                        Console.Write($"\r\n{p.parentComputer.genome}, with {p.NumLandmarks} landmarks and {p.NumCoins} coins");
+                    }
+                    Console.WriteLine();
                 }
-                Console.WriteLine();
+                Console.WriteLine($"\r\nGenome {orderedGenomes[0]} is the winner!\r\nFull results:\r\n");
             }
-            Console.WriteLine($"\r\nGenome {orderedGenomes[0]} is the winner!\r\nFull results:\r\n");
-            foreach(Genome g in orderedGenomes)
+            foreach (Genome g in orderedGenomes)
             {
-                Console.WriteLine($"{g}, with {g.MatchPoints}");
-                g.ChangeScore(0); //Resets the genome's match score
+                if(!isGen)
+                {
+                    Console.WriteLine($"{g}, with {g.MatchPoints}");
+                    g.ChangeScore(0); //Resets the genome's match score
+                }
+                
             }
             matchResults.Clear();
+            if(isGen)
+            {
+                genResults.Add(orderedGenomes);
+            }
 
-            
+        }
+        public void RunGen(Genome[][] genomes)
+        {
+            for(int i = 0; i < genomes.Length; i++)
+            {
+                RunMatch(genomes[i], true);
+            }
+            Console.WriteLine("Generation over!");
+            Console.WriteLine("These genomes will move on and breed (top 50%):\r\n");
+            for(int i = 0; i < 2; i++)
+            {
+                for(int j = 0; j < genResults.Count; j++)
+                {
+                    Console.WriteLine($"{genResults[j][i]} with {genResults[j][i].MatchPoints} points - " +
+                        $"{genResults[j][i].Wins} lifetime wins ({Math.Round((genResults[j][i].Wins / (genResults[i].Length * 3.0)) * 100, 2)}%)");
+                    genResults[j][i].ChangeScore(0);
+                    //Math.Round((genResults[j][i].Wins / (genResults[i].Length * 3.0)) * 100, 2)
+                }
+                Console.WriteLine(new string('-', 40));
+
+            }
         }
         public void AddMatchResults(PlayerHandler[] orderedResults)
         {
