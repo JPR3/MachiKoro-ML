@@ -46,11 +46,11 @@ namespace MachiKoro_ML
                 for(int i = 0; i < commandList.Count; i++)
                 {
                     CommandBase commandBase = commandList[i] as CommandBase;
-                    string output = $"{commandBase.commandId} - {commandBase.commandDescription}";
+                    string output = $"{commandBase.commandName} - {commandBase.commandDescription}";
                     Console.WriteLine(output);
                 }
             });
-            SYNTAX = new Command<string>("?", "shows the proper syntax for a command - used as '? <command>'", "? <command>", (x) =>
+            SYNTAX = new Command<string>("help <command>", "help", "shows the proper syntax for a command", "help <command>", (x) =>
             {
                 for(int i = 0; i < commandList.Count; i++)
                 {

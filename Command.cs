@@ -4,20 +4,26 @@ namespace MachiKoro_ML
 {
     public class CommandBase
     {
+        public string commandName;
         public string commandId;
         public string commandDescription;
         public string commandSyntax;
-        public CommandBase(string id, string description, string syntax)
+        public CommandBase(string id, string description, string syntax, string name)
         {
             commandId = id;
             commandDescription = description;
             commandSyntax = syntax;
+            commandName = name;
         }
     }
     public class Command : CommandBase
     {
         private Action command;
-        public Command(string id, string description, string syntax, Action command) : base(id, description, syntax)
+        public Command(string id, string description, string syntax, Action command) : base(id, description, syntax, id)
+        {
+            this.command = command;
+        }
+        public Command(string name, string id, string description, string syntax, Action command) : base(id, description, syntax, name)
         {
             this.command = command;
         }
@@ -30,7 +36,11 @@ namespace MachiKoro_ML
     public class Command<T1> : CommandBase
     {
         private Action<T1> command;
-        public Command(string id, string description, string syntax, Action<T1> command) : base(id, description, syntax)
+        public Command(string id, string description, string syntax, Action<T1> command) : base(id, description, syntax, id)
+        {
+            this.command = command;
+        }
+        public Command(string name, string id, string description, string syntax, Action<T1> command) : base(id, description, syntax, name)
         {
             this.command = command;
         }
@@ -42,7 +52,7 @@ namespace MachiKoro_ML
     public class Command<T1, T2> : CommandBase
     {
         private Action<T1, T2> command;
-        public Command(string id, string description, string syntax, Action<T1, T2> command) : base(id, description, syntax)
+        public Command(string id, string description, string syntax, Action<T1, T2> command) : base(id, description, syntax, id)
         {
             this.command = command;
         }
@@ -51,10 +61,11 @@ namespace MachiKoro_ML
             command.Invoke(value1, value2);
         }
     }
+    /*
     public class Command<T1, T2, T3> : CommandBase
     {
         private Action<T1, T2, T3> command;
-        public Command(string id, string description, string syntax, Action<T1, T2, T3> command) : base(id, description, syntax)
+        public Command(string id, string description, string syntax, Action<T1, T2, T3> command) : base(id, description, syntax, id)
         {
             this.command = command;
         }
@@ -66,7 +77,7 @@ namespace MachiKoro_ML
     public class Command<T1, T2, T3, T4> : CommandBase
     {
         private Action<T1, T2, T3, T4> command;
-        public Command(string id, string description, string syntax, Action<T1, T2, T3, T4> command) : base(id, description, syntax)
+        public Command(string id, string description, string syntax, Action<T1, T2, T3, T4> command) : base(id, description, syntax, id)
         {
             this.command = command;
         }
@@ -75,4 +86,5 @@ namespace MachiKoro_ML
             command.Invoke(value1, value2, value3, value4);
         }
     }
+    */
 }
