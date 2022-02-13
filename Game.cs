@@ -13,6 +13,7 @@ namespace MachiKoro_ML
         int currentPlayerIndex;
         public List<Card> allCards = new List<Card>();
         private readonly Program prog;
+        private readonly bool isMatch;
         public Game(int numPlayers, Program program)
         {
             currentPlayerIndex = 0;
@@ -24,10 +25,10 @@ namespace MachiKoro_ML
             CurrentPlayer = players[0];
             prog = program;
         }
-        public Game(int numHumans, int numComputers, Program program, bool enableLogging)
+        public Game(int numHumans, int numComputers, Program program, bool enableLogging, bool isSet)
         {
             currentPlayerIndex = 0;
-            
+            this.isMatch = isSet;
             if (numComputers != 0)
             {
                 players = new PlayerHandler[numHumans + numComputers];
@@ -65,6 +66,21 @@ namespace MachiKoro_ML
                 CurrentPlayer.parentComputer.TakeTurn();
             }
         }
+        public Game(Genome[] genomes, Program program, bool enableLogging, bool isMatch)
+        {
+            currentPlayerIndex = 0;
+            this.isMatch = isMatch;
+            players = new PlayerHandler[genomes.Length];
+            //Add computer players
+            for (int j = 0; j < genomes.Length; j++)
+            {
+                PlayerHandler newComputer = new PlayerHandler(this, "Computer " + (j + 1), new ComputerBase(genomes[j]), enableLogging);
+                players[j] = newComputer;
+            }
+            CurrentPlayer = players[0];
+            prog = program;
+            CurrentPlayer.parentComputer.TakeTurn();
+        }
         public void IncrementTurn()
         {
             //Reset values for current player
@@ -78,18 +94,24 @@ namespace MachiKoro_ML
                 //Order the winners
                 PlayerHandler[] orderedResults = new PlayerHandler[players.Length];
                 Array.Copy(players, orderedResults, players.Length);
+                PlayerHandler temp;
                 for(int i = 0; i < orderedResults.Length; i++)
                 {
-                    PlayerHandler p1 = orderedResults[i];
                     for (int j = i + 1; j < orderedResults.Length; j++)
                     {
-                        PlayerHandler p2 = orderedResults[j];
-                        if (p1.NumLandmarks < p2.NumLandmarks || p1.NumLandmarks == p2.NumLandmarks && p1.NumCoins < p2.NumCoins)
+                        if (orderedResults[i].NumLandmarks < orderedResults[j].NumLandmarks || orderedResults[i].NumLandmarks == orderedResults[j].NumLandmarks && orderedResults[i].NumCoins < orderedResults[j].NumCoins)
                         {
-                            orderedResults[i] = p2;
-                            orderedResults[j] = p1;
+                            
+                            temp = orderedResults[i];
+                            orderedResults[i] = orderedResults[j];
+                            orderedResults[j] = temp;
                         }
                     }
+                }
+                if(isMatch)
+                {
+                    prog.AddMatchResults(orderedResults);
+                    return;
                 }
                 prog.EndGame(orderedResults);
                 return;

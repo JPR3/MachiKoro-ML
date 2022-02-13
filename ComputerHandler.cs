@@ -14,7 +14,7 @@ namespace MachiKoro_ML
         public int GenomeIndex { get; private set; } = 0;
         public ComputerBase(Card.Establishments target) //Dumb computer
         {
-            this.Target = target;
+            Target = target;
         }
         public ComputerBase(Genome g) //Smart computer
         {

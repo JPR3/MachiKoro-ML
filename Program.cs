@@ -21,6 +21,7 @@ namespace MachiKoro_ML
         Command<int> PLAY;
         Command<int, int> COMPLAY;
         Command<int> COMPUTERGAME;
+        Command TESTMATCH;
         Command PLAYER;
         Command PLAYERS;
         Command ROLL;
@@ -37,6 +38,7 @@ namespace MachiKoro_ML
         List<object> outCommands;
         List<object> playingCommands;
         List<object> commandList;
+        List<PlayerHandler[]> matchResults = new List<PlayerHandler[]>();
         public void ReadCommands()
         {
             HELP = new Command("help", "shows a list of currently usable commands", "help", () =>
@@ -80,7 +82,7 @@ namespace MachiKoro_ML
                     return;
                 }
                 Console.WriteLine("Starting a game!");
-                game = new Game(h, c, this, true);
+                game = new Game(h, c, this, true, false);
                 
             });
             COMPUTERGAME = new Command<int>("computergame", "runs a single game set of up to four random computers", "computergame <computer count>", (x) =>
@@ -91,14 +93,21 @@ namespace MachiKoro_ML
                     Console.WriteLine("Must specify between 1 and 4 computers");
                     return;
                 }
-                game = new Game(0, x, this, false);
+                game = new Game(0, x, this, false, false);
                 
+            });
+            TESTMATCH = new Command("match", "runs a single match of four random computers", "match", () =>
+            {
+                commandList = playingCommands;
+                RunMatch(4);
+                matchResults.Clear();
+                commandList = outCommands;
             });
             DUMMYGAME = new Command("dummygame", "plays a game with two dumb computers", "dummygame", () =>
             {
                 commandList = playingCommands;
                 Console.WriteLine("Starting a game!");
-                game = new Game(1, 0, this, true);
+                game = new Game(1, 0, this, true, false);
                 
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
@@ -218,6 +227,7 @@ namespace MachiKoro_ML
                 PLAY,
                 COMPLAY,
                 COMPUTERGAME,
+                TESTMATCH,
                 DUMMYGAME,
                 RULES,
                 CLEAR,
@@ -264,6 +274,72 @@ namespace MachiKoro_ML
                     
                 }
             }
+        }
+        public void RunMatch(int playerCount)
+        {
+            Genome[] genomes = new Genome[playerCount];
+            for(int i = 0; i < genomes.Length; i++)
+            {
+                genomes[i] = new Genome();
+            }
+            for (int i = 0; i < playerCount; i++)
+            {
+                //Run three games, then rotate order
+                for(int ii = 0; ii < 3; ii++)
+                {
+                    game = null;
+                    game = new Game(genomes, this, false, true);
+                }
+                Genome[] temp = new Genome[playerCount];
+                for(int j = 0; j < genomes.Length - 1; j++)
+                {
+                    temp[j + 1] = genomes[j];
+                }
+                temp[0] = genomes[genomes.Length - 1];
+                genomes = temp;
+            }
+            Genome[] orderedGenomes = new Genome[genomes.Length];
+            Array.Copy(genomes, orderedGenomes, genomes.Length);
+            Genome tempGenome;
+            for (int i = 0; i < orderedGenomes.Length; i++)
+            {
+                for (int j = i + 1; j < orderedGenomes.Length; j++)
+                {
+                    if (orderedGenomes[i].MatchPoints > orderedGenomes[j].MatchPoints)
+                    {
+                        tempGenome = orderedGenomes[i];
+                        orderedGenomes[i] = orderedGenomes[j];
+                        orderedGenomes[j] = tempGenome;
+                    }
+                }
+            }
+            for (int i = 0; i < matchResults.Count; i++)
+            {
+                Console.WriteLine($"\r\nGame {i + 1}");
+                foreach (PlayerHandler p in matchResults[i])
+                {
+                    Console.Write($"\r\n{p.parentComputer.genome}, with {p.NumLandmarks} landmarks and {p.NumCoins} coins");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine($"\r\nGenome {orderedGenomes[0]} is the winner!\r\nFull results:\r\n");
+            foreach(Genome g in orderedGenomes)
+            {
+                Console.WriteLine($"{g}, with {g.MatchPoints}");
+                g.ChangeScore(0); //Resets the genome's match score
+            }
+            matchResults.Clear();
+
+            
+        }
+        public void AddMatchResults(PlayerHandler[] orderedResults)
+        {
+            for(int i = 0; i < orderedResults.Length; i++)
+            {
+                orderedResults[i].parentComputer.genome.ChangeScore(i + 1);
+            }
+            game = null;
+            matchResults.Add(orderedResults);
         }
         public void EndGame(PlayerHandler[] orderedResults)
         {

@@ -29,9 +29,11 @@ namespace MachiKoro_ML
         };
         public readonly int[] targetList;
         readonly string name = "";
+        public int Wins { get; private set; }
+        public int MatchPoints { get; private set; }
         public Genome()
         {
-
+            Wins = 0;
             Random rand = new Random();
             targetList = new int[25];
             List<int> availableIDs = allIDs.ToList();
@@ -71,6 +73,19 @@ namespace MachiKoro_ML
                     //Convert to a letter: 10 = A, 11 = B, etc.
                     name += (char)(num + 55);
                 }
+            }
+        }
+        public void ChangeScore(int position)
+        {
+            if(position == 0)
+            { 
+                MatchPoints = 0;
+                return; 
+            }
+            MatchPoints += position;
+            if(position == 1)
+            {
+                Wins++;
             }
         }
         public override string ToString()
