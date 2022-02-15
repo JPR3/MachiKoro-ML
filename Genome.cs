@@ -75,6 +75,28 @@ namespace MachiKoro_ML
                 }
             }
         }
+        public Genome(int[] targets)
+        {
+            Wins = 0;
+            targetList = targets;
+            //Set name
+            foreach (int num in targetList)
+            {
+                if (num < 10)
+                {
+                    name += num;
+                }
+                else
+                {
+                    //Convert to a letter: 10 = A, 11 = B, etc.
+                    name += (char)(num + 55);
+                }
+            }
+        }
+        public int[] ToIntArray()
+        {
+            return targetList;
+        }
         public void ChangeScore(int position)
         {
             if(position == 0)

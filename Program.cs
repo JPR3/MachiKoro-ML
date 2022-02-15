@@ -3,9 +3,26 @@ using System.Collections.Generic;
 
 namespace MachiKoro_ML
 {
+    static class Extensions
+    {
+        private static Random rng = new Random();
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+    }
     class Initialize
     {
-        public static void Main(String[] args)
+        public static void Main()
         {
             Console.WriteLine("Welcome to Machi Koro!\r\nType 'help' for a list of commands");
             Program prog = new Program();
@@ -14,6 +31,7 @@ namespace MachiKoro_ML
     }
     public class Program //Rename at some point
     {
+        readonly Random random = new Random();
         Game game;
         Command HELP;
         Command<string> SYNTAX;
@@ -41,11 +59,13 @@ namespace MachiKoro_ML
         List<object> commandList;
         List<PlayerHandler[]> matchResults = new List<PlayerHandler[]>();
         List<Genome[]> genResults = new List<Genome[]>();
+        static int genNumber = 0;
+
         public void ReadCommands()
         {
             HELP = new Command("help", "shows a list of currently usable commands", "help", () =>
             {
-                for(int i = 0; i < commandList.Count; i++)
+                for (int i = 0; i < commandList.Count; i++)
                 {
                     CommandBase commandBase = commandList[i] as CommandBase;
                     string output = $"{commandBase.commandName} - {commandBase.commandDescription}";
@@ -54,10 +74,10 @@ namespace MachiKoro_ML
             });
             SYNTAX = new Command<string>("help <command>", "help", "shows the proper syntax for a command", "help <command>", (x) =>
             {
-                for(int i = 0; i < commandList.Count; i++)
+                for (int i = 0; i < commandList.Count; i++)
                 {
                     CommandBase commandBase = commandList[i] as CommandBase;
-                    if(commandBase.commandId.Equals(x))
+                    if (commandBase.commandId.Equals(x))
                     {
                         Console.WriteLine($"{commandBase.commandDescription} - '{commandBase.commandSyntax}'");
                     }
@@ -66,14 +86,14 @@ namespace MachiKoro_ML
             PLAY = new Command<int>("play", "begins a game with up to four human players", "play <player count>", (x) =>
             {
                 commandList = playingCommands;
-                if (x > 4 || x < 1) 
+                if (x > 4 || x < 1)
                 {
                     Console.WriteLine("Must specify between 1 and 4 players");
-                    return; 
+                    return;
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(x, this);
-                
+
             });
             COMPLAY = new Command<int, int>("complay", "begins a game with up to four human or computer players", "complay <player count> <computer count>", (h, c) =>
             {
@@ -85,7 +105,7 @@ namespace MachiKoro_ML
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(h, c, this, true, false);
-                
+
             });
             COMPUTERGAME = new Command<int>("computergame", "runs a single game set of up to four random computers", "computergame <computer count>", (x) =>
             {
@@ -96,7 +116,7 @@ namespace MachiKoro_ML
                     return;
                 }
                 game = new Game(0, x, this, false, false);
-                
+
             });
             TESTMATCH = new Command("match", "runs a single match of four random computers", "match", () =>
             {
@@ -110,15 +130,19 @@ namespace MachiKoro_ML
             {
                 commandList = playingCommands;
                 Genome[][] genomes = new Genome[10][];
-                for(int i = 0; i < genomes.Length; i++)
+                for (int i = 0; i < genomes.Length; i++)
                 {
                     genomes[i] = new Genome[4];
-                    for(int j = 0; j < 4; j++)
+                    for (int j = 0; j < 4; j++)
                     {
                         genomes[i][j] = new Genome();
                     }
                 }
-                RunGen(genomes);
+                for (int i = 0; i < 50; i++)
+                {
+                    genomes = RunGen(genomes, 50);
+                }
+
                 commandList = outCommands;
 
             });
@@ -127,7 +151,7 @@ namespace MachiKoro_ML
                 commandList = playingCommands;
                 Console.WriteLine("Starting a game!");
                 game = new Game(1, 0, this, true, false);
-                
+
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
             {
@@ -135,16 +159,16 @@ namespace MachiKoro_ML
             });
             PLAYERS = new Command("players", "shows info about all players", "players", () =>
             {
-                foreach(PlayerHandler p in game.players)
+                foreach (PlayerHandler p in game.players)
                 {
-                    Console.WriteLine(p.GetInfo());                
+                    Console.WriteLine(p.GetInfo());
                 }
             });
             ROLL = new Command("roll", "rolls one or two dice", "roll", () =>
             {
                 RollData data = game.CurrentPlayer.Roll(game.CurrentPlayer.HasTrain);
                 int rollNum = data.rollVal1 + data.rollVal2;
-                if(data.rollVal2 != 0)
+                if (data.rollVal2 != 0)
                 {
                     Console.WriteLine($"Rolled a {rollNum} ({data.rollVal1} + {data.rollVal2})");
                 }
@@ -204,7 +228,7 @@ namespace MachiKoro_ML
             });
             INFO = new Command<string>("info", "displays info about a card type", "info <type>", (x) =>
             {
-                if(Enum.TryParse(x, out Card.Establishments est))
+                if (Enum.TryParse(x, out Card.Establishments est))
                 {
                     Console.WriteLine(Card.GetEstDesc(est));
                 }
@@ -272,7 +296,7 @@ namespace MachiKoro_ML
                             (commandList[i] as Command).Invoke();
                             Console.WriteLine();
                         }
-                        else if(commandList[i] as Command<int> != null && args.Length == 2)
+                        else if (commandList[i] as Command<int> != null && args.Length == 2)
                         {
                             Console.WriteLine();
                             (commandList[i] as Command<int>).Invoke(int.Parse(args[1]));
@@ -291,7 +315,7 @@ namespace MachiKoro_ML
                             Console.WriteLine();
                         }
                     }
-                    
+
                 }
             }
         }
@@ -327,7 +351,7 @@ namespace MachiKoro_ML
                     }
                 }
             }
-            if(!isGen)
+            if (!isGen)
             {
 
                 for (int i = 0; i < matchResults.Count; i++)
@@ -343,44 +367,136 @@ namespace MachiKoro_ML
             }
             foreach (Genome g in orderedGenomes)
             {
-                if(!isGen)
+                if (!isGen)
                 {
                     Console.WriteLine($"{g}, with {g.MatchPoints}");
                     g.ChangeScore(0); //Resets the genome's match score
                 }
-                
+
             }
             matchResults.Clear();
-            if(isGen)
+            if (isGen)
             {
                 genResults.Add(orderedGenomes);
             }
 
         }
-        public void RunGen(Genome[][] genomes)
+        public Genome[][] RunGen(Genome[][] genomes, int targetNumber)
         {
-            for(int i = 0; i < genomes.Length; i++)
+            Console.WriteLine($"Starting generation {genNumber}");
+            List<Genome> nextGen = new List<Genome>();
+            List<Genome> survivorPool = new List<Genome>();
+            for (int i = 0; i < genomes.Length; i++)
             {
                 RunMatch(genomes[i], true);
             }
+            int playersPerGame = genResults[0].Length;
             Console.WriteLine("Generation over!");
-            Console.WriteLine("These genomes will move on and breed (top 50%):\r\n");
-            for(int i = 0; i < 2; i++)
+            Console.WriteLine("These genomes will move on and breed (less than 24 points):\r\n");
+            for (int i = 0; i < genResults.Count; i++)
             {
-                for(int j = 0; j < genResults.Count; j++)
+                for (int j = 0; j < playersPerGame; j++)
                 {
-                    Console.WriteLine($"{genResults[j][i]} with {genResults[j][i].MatchPoints} points - " +
-                        $"{genResults[j][i].Wins} lifetime wins ({Math.Round((genResults[j][i].Wins / (genResults[i].Length * 3.0)) * 100, 2)}%)");
-                    genResults[j][i].ChangeScore(0);
-                    //Math.Round((genResults[j][i].Wins / (genResults[i].Length * 3.0)) * 100, 2)
+                    Genome currentGenome = genResults[i][j];
+                    if (currentGenome.MatchPoints > 30 && j != 0) { continue; }
+                    Console.WriteLine($"{currentGenome} with {currentGenome.MatchPoints} points - " +
+                        $"{currentGenome.Wins} lifetime wins ({Math.Round(currentGenome.Wins / (playersPerGame * 3.0) * 100, 2)}%)");
+                    nextGen.Add(currentGenome);
+                    survivorPool.Add(currentGenome);
+                    currentGenome.ChangeScore(0);
                 }
                 Console.WriteLine(new string('-', 40));
-
             }
+            //Breed the genomes!
+            List<int> sectionLengths = new List<int>();
+            int totalNum = 0;
+            while (totalNum < 25)
+            {
+                int nextLength = random.Next(1, 4);
+                if (totalNum + nextLength >= 25)
+                {
+                    sectionLengths.Add(24 - totalNum);
+                    break;
+                }
+                sectionLengths.Add(nextLength);
+                totalNum += nextLength;
+            }
+            survivorPool.Shuffle();
+            while (survivorPool.Count > 1 && nextGen.Count < playersPerGame * 10)
+            {
+                int[] child1;
+                int[] child2;
+                int rand1 = random.Next(survivorPool.Count);
+                child1 = survivorPool[rand1].ToIntArray();
+                survivorPool.RemoveAt(rand1);
+                if (survivorPool.Count == 0)
+                {
+                    break;
+                }
+                int rand2 = random.Next(survivorPool.Count);
+                child2 = survivorPool[rand2].ToIntArray();
+                survivorPool.RemoveAt(rand2);
+
+                int globalIndex = 0;
+                for (int i = 0; i < sectionLengths.Count; i++)
+                {
+                    for (int j = 0; j < sectionLengths[i]; j++)
+                    {
+                        if (i % 2 != 0)
+                        {
+                            child1[globalIndex] = child2[globalIndex];
+                            child2[globalIndex] = child1[globalIndex];
+                        }
+                        nextGen.Add(new Genome(child1));
+                        if (nextGen.Count == playersPerGame * 10) { break; }
+                        nextGen.Add(new Genome(child2));
+                        globalIndex++;
+                    }
+                }
+            }
+            while (nextGen.Count < playersPerGame * 10)
+            {
+                nextGen.Add(new Genome());
+            }
+            genResults.Clear();
+            nextGen.Shuffle();
+            genNumber++;
+            Genome[][] nextSetup = new Genome[10][];
+            for (int i = 0; i < 10; i++)
+            {
+                Genome[] table = new Genome[playersPerGame];
+                for (int j = 0; j < playersPerGame; j++)
+                {
+                    table[j] = nextGen[0];
+                    nextGen.RemoveAt(0);
+                }
+                nextSetup[i] = table;
+            }
+            return nextSetup;
+            /*Query for continuation
+            Console.WriteLine("Generation has finished, type 'C' to continue");
+            string str = Console.ReadLine();
+            if(str.ToLower().Equals("c"))
+            {
+                Genome[][] nextSetup = new Genome[10][];
+                for(int i = 0; i < 10; i++)
+                {
+                    Genome[] table = new Genome[playersPerGame];
+                    for(int j = 0; j < playersPerGame; j++)
+                    {
+                        table[j] = nextGen[0];
+                        nextGen.RemoveAt(0);
+                    }
+                    nextSetup[i] = table;
+                }
+                RunGen(nextSetup);
+            }
+            */
+
         }
         public void AddMatchResults(PlayerHandler[] orderedResults)
         {
-            for(int i = 0; i < orderedResults.Length; i++)
+            for (int i = 0; i < orderedResults.Length; i++)
             {
                 orderedResults[i].parentComputer.genome.ChangeScore(i + 1);
             }
@@ -389,13 +505,13 @@ namespace MachiKoro_ML
         }
         public void EndGame(PlayerHandler[] orderedResults)
         {
-            if(orderedResults != null)
+            if (orderedResults != null)
             {
                 Console.WriteLine($"{orderedResults[0]} has collected all four landmark cards, they win!\r\nFull results:");
-                foreach(PlayerHandler p in orderedResults)
+                foreach (PlayerHandler p in orderedResults)
                 {
                     Console.Write($"\r\n{p}, with {p.NumLandmarks} landmarks and {p.NumCoins} coins");
-                    if(p.parentComputer != null)
+                    if (p.parentComputer != null)
                     {
                         Console.Write($" - {p.parentComputer.genome}");
                     }
@@ -407,5 +523,5 @@ namespace MachiKoro_ML
             commandList = outCommands;
         }
     }
-    
+
 }
