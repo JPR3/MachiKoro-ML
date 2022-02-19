@@ -8,6 +8,7 @@ namespace MachiKoro_ML
 {
     public class Game
     {
+        private bool isPlaying;
         public readonly PlayerHandler[] players;
         public PlayerHandler CurrentPlayer { get; private set; }
         int currentPlayerIndex;
@@ -16,6 +17,7 @@ namespace MachiKoro_ML
         private readonly bool isMatch;
         public Game(int numPlayers, Program program)
         {
+            isPlaying = true;
             currentPlayerIndex = 0;
             players = new PlayerHandler[numPlayers];
             for (int i = 0; i < numPlayers; i++)
@@ -27,6 +29,7 @@ namespace MachiKoro_ML
         }
         public Game(int numHumans, int numComputers, Program program, bool enableLogging, bool isSet)
         {
+            isPlaying = true;
             currentPlayerIndex = 0;
             this.isMatch = isSet;
             if (numComputers != 0)
@@ -61,13 +64,10 @@ namespace MachiKoro_ML
             }
             CurrentPlayer = players[0];
             prog = program;
-            if(numHumans == 0)
-            {
-                CurrentPlayer.parentComputer.TakeTurn();
-            }
         }
         public Game(Genome[] genomes, Program program, bool enableLogging, bool isMatch)
         {
+            isPlaying = true;
             currentPlayerIndex = 0;
             this.isMatch = isMatch;
             players = new PlayerHandler[genomes.Length];
@@ -79,7 +79,22 @@ namespace MachiKoro_ML
             }
             CurrentPlayer = players[0];
             prog = program;
-            CurrentPlayer.parentComputer.TakeTurn();
+        }
+        public void HandleTurns()
+        {
+            while(isPlaying)
+            {
+                if (CurrentPlayer.parentComputer != null)
+                { //Computer
+                    CurrentPlayer.parentComputer.TakeTurn();
+                }
+                else
+                {
+                    string str = Console.ReadLine();
+                    prog.InterpretCommand(str);
+                }
+            }
+                
         }
         public void IncrementTurn()
         {
@@ -91,6 +106,8 @@ namespace MachiKoro_ML
             //Check for a win
             if(CurrentPlayer.HasMall && CurrentPlayer.HasPark && CurrentPlayer.HasRadio && CurrentPlayer.HasTrain)
             {
+                isPlaying = false;
+                prog.SetCommands(true);
                 //Order the winners
                 PlayerHandler[] orderedResults = new PlayerHandler[players.Length];
                 Array.Copy(players, orderedResults, players.Length);
@@ -124,11 +141,8 @@ namespace MachiKoro_ML
             {
                 Console.WriteLine($"{CurrentPlayer}'s turn!");
             }
-            //If the current player is a computer, have them take their turn
-            if(CurrentPlayer.parentComputer != null)
-            {
-                CurrentPlayer.parentComputer.TakeTurn();
-            }
+            prog.SetCommands(CurrentPlayer.parentComputer == null);
+
         }
         public void EvaluateRoll(int roll, bool doubles)
         {
@@ -229,10 +243,6 @@ namespace MachiKoro_ML
                     if (CurrentPlayer.shouldLog)
                     {
                         Console.WriteLine($"\r\n{CurrentPlayer} goes again, because they rolled doubles");
-                    }
-                    if(CurrentPlayer.parentComputer != null)
-                    {
-                        CurrentPlayer.parentComputer.TakeTurn();
                     }
                 }
                 return;

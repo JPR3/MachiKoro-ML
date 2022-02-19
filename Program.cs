@@ -60,7 +60,11 @@ namespace MachiKoro_ML
         List<PlayerHandler[]> matchResults = new List<PlayerHandler[]>();
         List<Genome[]> genResults = new List<Genome[]>();
         static int genNumber = 0;
-
+        bool allowCommands = true;
+        public void SetCommands(bool allow)
+        {
+            allowCommands = allow;
+        }
         public void ReadCommands()
         {
             HELP = new Command("help", "shows a list of currently usable commands", "help", () =>
@@ -93,6 +97,7 @@ namespace MachiKoro_ML
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(x, this);
+                game.HandleTurns();
 
             });
             COMPLAY = new Command<int, int>("complay", "begins a game with up to four human or computer players", "complay <player count> <computer count>", (h, c) =>
@@ -105,6 +110,7 @@ namespace MachiKoro_ML
                 }
                 Console.WriteLine("Starting a game!");
                 game = new Game(h, c, this, true, false);
+                game.HandleTurns();
 
             });
             COMPUTERGAME = new Command<int>("computergame", "runs a single game set of up to four random computers", "computergame <computer count>", (x) =>
@@ -116,6 +122,7 @@ namespace MachiKoro_ML
                     return;
                 }
                 game = new Game(0, x, this, false, false);
+                game.HandleTurns();
 
             });
             TESTMATCH = new Command("match", "runs a single match of four random computers", "match", () =>
@@ -151,6 +158,7 @@ namespace MachiKoro_ML
                 commandList = playingCommands;
                 Console.WriteLine("Starting a game!");
                 game = new Game(1, 0, this, true, false);
+                game.HandleTurns();
 
             });
             PLAYER = new Command("player", "shows info about the current player", "player", () =>
@@ -282,41 +290,46 @@ namespace MachiKoro_ML
             commandList = outCommands;
             while (true) //Read the console for commands
             {
+                if(!allowCommands) { continue; }
                 string input = Console.ReadLine();
-                string[] args = input.Split(' ');
-                for (int i = 0; i < commandList.Count; i++)
+                InterpretCommand(input);
+            }
+        }
+        public void InterpretCommand(string cmd)
+        {
+            string[] args = cmd.Split(' ');
+            for (int i = 0; i < commandList.Count; i++)
+            {
+                CommandBase commandBase = commandList[i] as CommandBase;
+
+                if (args[0] == (commandBase.commandId))
                 {
-                    CommandBase commandBase = commandList[i] as CommandBase;
-
-                    if (args[0] == (commandBase.commandId))
+                    if (commandList[i] as Command != null && args.Length == 1)
                     {
-                        if (commandList[i] as Command != null && args.Length == 1)
-                        {
-                            Console.WriteLine();
-                            (commandList[i] as Command).Invoke();
-                            Console.WriteLine();
-                        }
-                        else if (commandList[i] as Command<int> != null && args.Length == 2)
-                        {
-                            Console.WriteLine();
-                            (commandList[i] as Command<int>).Invoke(int.Parse(args[1]));
-                            Console.WriteLine();
-                        }
-                        else if (commandList[i] as Command<string> != null && args.Length == 2)
-                        {
-                            Console.WriteLine();
-                            (commandList[i] as Command<string>).Invoke(args[1]);
-                            Console.WriteLine();
-                        }
-                        else if (commandList[i] as Command<int, int> != null && args.Length == 3)
-                        {
-                            Console.WriteLine();
-                            (commandList[i] as Command<int, int>).Invoke(int.Parse(args[1]), int.Parse(args[2]));
-                            Console.WriteLine();
-                        }
+                        Console.WriteLine();
+                        (commandList[i] as Command).Invoke();
+                        Console.WriteLine();
                     }
-
+                    else if (commandList[i] as Command<int> != null && args.Length == 2)
+                    {
+                        Console.WriteLine();
+                        (commandList[i] as Command<int>).Invoke(int.Parse(args[1]));
+                        Console.WriteLine();
+                    }
+                    else if (commandList[i] as Command<string> != null && args.Length == 2)
+                    {
+                        Console.WriteLine();
+                        (commandList[i] as Command<string>).Invoke(args[1]);
+                        Console.WriteLine();
+                    }
+                    else if (commandList[i] as Command<int, int> != null && args.Length == 3)
+                    {
+                        Console.WriteLine();
+                        (commandList[i] as Command<int, int>).Invoke(int.Parse(args[1]), int.Parse(args[2]));
+                        Console.WriteLine();
+                    }
                 }
+
             }
         }
         public void RunMatch(Genome[] genomes, bool isGen)
